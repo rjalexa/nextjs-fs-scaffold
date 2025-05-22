@@ -1,0 +1,6 @@
+# pnpm-workspace.yaml
+packages:
+  # All packages in direct subdirectories of packages/
+  - 'packages/*'
+  # All packages in direct subdirectories of apps/
+  - 'apps/*'
