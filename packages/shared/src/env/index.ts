@@ -5,7 +5,7 @@ export const frontendEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   NEXT_PUBLIC_API_URL: z.string().url().optional(),
   NEXT_PUBLIC_APP_URL: z.string().url().optional(),
-  PORT: z.string().transform(Number).pipe(z.number().min(1).max(65535)).optional(),
+  FRONTEND_PORT: z.string().transform(Number).pipe(z.number().min(1).max(65535)).default('3000'),
 });
 
 // Backend environment schema
