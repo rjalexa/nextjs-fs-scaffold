@@ -1,27 +1,38 @@
 import cors from 'cors';
 import express from 'express';
-import helmet from 'helmet';
 import morgan from 'morgan';
 
 import config from './config.js';
 import logger from './logger.js';
 import { notFoundHandler, errorHandler } from './middleware/error-handler.js';
 import { requestIdMiddleware } from './middleware/request-id.js';
+import { securityHeaders, rateLimit, validateInput, corsOptions } from './middleware/security.js';
 // Import routes
 import healthRoutes from './routes/health.js';
 
 // Create Express application
 const app = express();
 
-// Apply middleware
-app.use(helmet()); // Security headers
-app.use(cors(config.cors)); // CORS configuration
-app.use(express.json()); // Parse JSON request body
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request body
+// Trust proxy for accurate IP addresses
+app.set('trust proxy', 1);
+
+// Apply security middleware
+app.use(securityHeaders); // Security headers with helmet
+app.use(cors(corsOptions)); // CORS configuration with security options
+app.use(rateLimit as express.RequestHandler); // Rate limiting
+app.use(express.json({ limit: '10mb' })); // Parse JSON request body
+app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Parse URL-encoded request body
+app.use(validateInput as express.RequestHandler); // Input validation and sanitization
 app.use(requestIdMiddleware as express.RequestHandler); // Add request ID to each request
-app.use(morgan('dev')); // HTTP request logging
+
+// Logging middleware
+app.use(morgan('combined', {
+  stream: { write: (message) => logger.info(message.trim()) },
+  skip: (req) => req.url === '/health' || req.url === '/api/health', // Skip health check logs
+}));
 
 // Mount routes
+app.use('/health', healthRoutes);
 app.use('/api/health', healthRoutes);
 
 // Apply error handling middleware
@@ -29,9 +40,10 @@ app.use(notFoundHandler as express.RequestHandler); // Handle 404 errors
 app.use(errorHandler as express.ErrorRequestHandler); // Handle all other errors
 
 // Start server
-const server = app.listen(config.server.port, () => {
+const server = app.listen(config.server.port, config.server.host, () => {
   logger.info(`Server running at http://${config.server.host}:${config.server.port}`);
   logger.info(`Environment: ${process.env.NODE_ENV}`);
+  logger.info(`CORS origins: ${JSON.stringify(config.cors.origin)}`);
 });
 
 // Handle graceful shutdown

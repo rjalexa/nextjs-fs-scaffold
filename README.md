@@ -1,209 +1,332 @@
-# Next.js Full-Stack Application Scaffold
+# Next.js Full-Stack Scaffold
 
-A production-ready Next.js full-stack application scaffold with TypeScript, Material UI, and pnpm workspaces.
+A production-ready Next.js full-stack application scaffold with TypeScript, Material UI, and comprehensive tooling for modern web development.
 
-## Features
+## 🚀 Features
 
-- **Next.js 15+** with App Router and React 19
+### Frontend
+- **Next.js 15** with App Router
 - **TypeScript** for type safety
-- **Material UI v6** for UI components
-- **pnpm Workspaces** for monorepo management
-- **Express.js** mock backend for development
-- **Docker** for containerization
-- **ESLint & Prettier** for code quality
-- **Shared packages** for code reuse
+- **Material UI v6** for modern, accessible components
+- **Emotion** for CSS-in-JS styling
+- **Responsive design** with mobile-first approach
+- **PWA ready** with service worker support
 
-## Project Structure
+### Backend
+- **Express.js** with TypeScript
+- **Comprehensive security** with Helmet, CORS, rate limiting
+- **Environment validation** with Zod
+- **Structured logging** with Winston
+- **Health checks** and monitoring endpoints
+- **Request ID tracking** for debugging
+
+### Development Experience
+- **Monorepo** structure with pnpm workspaces
+- **Shared packages** for types, utilities, and UI components
+- **ESLint + Prettier** for code quality
+- **Husky + lint-staged** for pre-commit hooks
+- **Hot reload** for both frontend and backend
+
+### Testing
+- **Jest** for unit and integration testing
+- **React Testing Library** for component testing
+- **Playwright** for end-to-end testing
+- **Coverage reporting** with detailed metrics
+
+### Production
+- **Docker** support with multi-stage builds
+- **Docker Compose** for development and production
+- **Nginx** reverse proxy for production
+- **Health checks** and graceful shutdown
+- **Environment-based configuration**
+
+## 📁 Project Structure
 
 ```
-project-root/
 ├── apps/
-│   ├── frontend/          # Next.js application
-│   └── mock-backend/      # Mock API service for development
+│   ├── frontend/                 # Next.js application
+│   │   ├── src/
+│   │   │   ├── app/             # App Router pages
+│   │   │   ├── components/      # React components
+│   │   │   ├── lib/             # Utilities and API client
+│   │   │   └── test/            # Test setup and E2E tests
+│   │   ├── public/              # Static assets
+│   │   ├── playwright.config.ts # E2E test configuration
+│   │   └── package.json
+│   └── mock-backend/            # Express.js API server
+│       ├── src/
+│       │   ├── middleware/      # Express middleware
+│       │   ├── routes/          # API routes
+│       │   ├── config.ts        # Configuration
+│       │   ├── logger.ts        # Logging setup
+│       │   └── index.ts         # Server entry point
+│       └── package.json
 ├── packages/
-│   ├── shared/            # Shared types, utilities
-│   └── ui-components/     # Shared UI components
-├── docker/
-│   ├── frontend.dev.dockerfile
-│   ├── mock-backend.dockerfile
-│   └── docker-compose.dev.yml
-├── pnpm-workspace.yaml
-├── package.json
-├── .dockerignore
-├── .gitignore
-└── README.md
+│   ├── shared/                  # Shared utilities and types
+│   │   ├── src/
+│   │   │   ├── api/            # API contracts
+│   │   │   ├── types/          # TypeScript types
+│   │   │   ├── utils/          # Utility functions
+│   │   │   └── env/            # Environment validation
+│   │   └── package.json
+│   └── ui-components/           # Shared UI components
+│       ├── src/
+│       │   ├── components/     # Reusable components
+│       │   └── theme/          # Material UI theme
+│       └── package.json
+├── docker/                      # Docker configurations
+│   ├── docker-compose.dev.yml  # Development environment
+│   ├── docker-compose.prod.yml # Production environment
+│   ├── frontend.dev.dockerfile # Frontend development
+│   ├── frontend.prod.dockerfile# Frontend production
+│   ├── mock-backend.dockerfile # Backend container
+│   └── nginx.conf              # Nginx configuration
+├── jest.config.js              # Jest configuration
+├── eslint.config.js            # ESLint configuration
+├── .prettierrc                 # Prettier configuration
+├── pnpm-workspace.yaml         # pnpm workspace configuration
+└── package.json                # Root package.json
 ```
 
-## Prerequisites
+## 🛠️ Getting Started
 
-- Node.js 20.x LTS
-- pnpm 9.x
-- Docker and Docker Compose (optional, for containerized development)
+### Prerequisites
 
-## Getting Started
+- **Node.js** >= 20.0.0
+- **pnpm** >= 9.0.0
+- **Docker** (optional, for containerized development)
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd next-fullstack-scaffold
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   # Copy environment files
+   cp .env.example .env
+   cp apps/frontend/.env.example apps/frontend/.env.local
+   cp apps/mock-backend/.env.example apps/mock-backend/.env
+   ```
+
+4. **Start development servers**
+   ```bash
+   # Start all services
+   pnpm dev:all
+   
+   # Or start individually
+   pnpm dev:frontend  # Frontend on http://localhost:3000
+   pnpm dev:backend   # Backend on http://localhost:3001
+   ```
+
+## 🐳 Docker Development
+
+### Development with Docker Compose
 
 ```bash
-git clone https://github.com/yourusername/next-fullstack-scaffold.git
-cd next-fullstack-scaffold
-```
-
-2. Install dependencies:
-
-```bash
-pnpm install
-```
-
-3. Set up environment variables:
-
-```bash
-# Copy environment files
-cp apps/frontend/.env.example apps/frontend/.env
-cp apps/mock-backend/.env.example apps/mock-backend/.env
-```
-
-### Development
-
-#### Option 1: Running services individually
-
-Start the frontend:
-
-```bash
-pnpm dev:frontend
-```
-
-Start the mock backend:
-
-```bash
-pnpm dev:backend
-```
-
-#### Option 2: Running all services locally
-
-Start all services in parallel:
-
-```bash
-pnpm dev:all
-```
-
-#### Option 3: Running with Docker
-
-Start all services in Docker containers:
-
-```bash
+# Start all services with hot reload
 pnpm docker:dev
-```
 
-### Building for Production
-
-Build all packages and applications:
-
-```bash
-pnpm build:all
-```
-
-### Linting and Type Checking
-
-Run linting:
-
-```bash
-pnpm lint
-```
-
-Fix linting issues:
-
-```bash
-pnpm lint:fix
-```
-
-Run type checking:
-
-```bash
-pnpm type-check
-```
-
-## Frontend Application
-
-The frontend application is built with Next.js 15+ and uses the App Router. It's located in the `apps/frontend` directory.
-
-### Key Features
-
-- App Router with layouts and loading states
-- Material UI v6 integration with SSR support
-- Theme system with dark/light mode
-- API client for backend integration
-- Form handling with validation
-- Responsive design
-
-### Directory Structure
-
-```
-apps/frontend/
-├── public/              # Static assets
-├── src/
-│   ├── app/             # App Router pages and layouts
-│   ├── components/      # React components
-│   └── lib/             # Utilities and API client
-├── next.config.js       # Next.js configuration
-├── package.json         # Dependencies and scripts
-└── tsconfig.json        # TypeScript configuration
-```
-
-## Mock Backend
-
-The mock backend is built with Express.js and TypeScript. It's located in the `apps/mock-backend` directory.
-
-### Key Features
-
-- RESTful API endpoints
-- CORS configuration
-- Request/response logging
-- Error handling
-- Environment-based configuration
-
-### Directory Structure
-
-```
-apps/mock-backend/
-├── src/
-│   ├── middleware/      # Express middleware
-│   ├── routes/          # API routes
-│   ├── config.ts        # Configuration
-│   ├── logger.ts        # Logging
-│   └── index.ts         # Entry point
-├── package.json         # Dependencies and scripts
-└── tsconfig.json        # TypeScript configuration
-```
-
-## Shared Packages
-
-### shared
-
-The `shared` package contains common types, utilities, and API contracts. It's located in the `packages/shared` directory.
-
-### ui-components
-
-The `ui-components` package contains reusable UI components built with Material UI. It's located in the `packages/ui-components` directory.
-
-## Docker
-
-The project includes Docker configuration for development and production environments.
-
-### Development
-
-```bash
+# Or manually
 docker compose -f docker/docker-compose.dev.yml up --build
 ```
 
-Or use the npm script:
+### Production with Docker Compose
 
 ```bash
-pnpm docker:dev
+# Build and start production environment
+pnpm docker:prod
+
+# Or manually
+docker compose -f docker/docker-compose.prod.yml up --build
 ```
 
-## License
+## 🧪 Testing
 
-MIT
+### Unit and Integration Tests
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Generate coverage report
+pnpm test:coverage
+```
+
+### End-to-End Tests
+
+```bash
+# Run E2E tests
+pnpm test:e2e
+
+# Run E2E tests with UI
+pnpm test:e2e:ui
+```
+
+## 🔧 Development Scripts
+
+### Root Level Commands
+
+```bash
+pnpm dev:all        # Start all development servers
+pnpm build:all      # Build all packages
+pnpm lint           # Lint all packages
+pnpm lint:fix       # Fix linting issues
+pnpm type-check     # Run TypeScript checks
+pnpm test           # Run all tests
+pnpm clean          # Clean all build artifacts
+```
+
+### Package-Specific Commands
+
+```bash
+# Frontend
+pnpm --filter frontend dev
+pnpm --filter frontend build
+pnpm --filter frontend test
+
+# Backend
+pnpm --filter mock-backend dev
+pnpm --filter mock-backend build
+pnpm --filter mock-backend test
+```
+
+## 🏗️ Architecture
+
+### Frontend Architecture
+
+- **App Router**: Modern Next.js routing with layouts
+- **Component Structure**: Atomic design principles
+- **State Management**: React hooks and context
+- **Styling**: Material UI with custom theme
+- **API Integration**: Type-safe API client
+
+### Backend Architecture
+
+- **Layered Architecture**: Routes → Middleware → Services
+- **Security First**: Comprehensive security middleware
+- **Error Handling**: Centralized error handling
+- **Logging**: Structured logging with request correlation
+- **Configuration**: Environment-based configuration
+
+### Shared Packages
+
+- **Types**: Shared TypeScript interfaces
+- **Utilities**: Common utility functions
+- **API Contracts**: Request/response types
+- **UI Components**: Reusable React components
+
+## 🔒 Security Features
+
+### Frontend Security
+- **Content Security Policy** (CSP)
+- **XSS Protection**
+- **CSRF Protection**
+- **Secure Headers**
+
+### Backend Security
+- **Helmet.js** for security headers
+- **CORS** configuration
+- **Rate limiting** (configurable)
+- **Input validation** and sanitization
+- **Request ID tracking**
+
+## 🚀 Production Deployment
+
+### Environment Variables
+
+#### Frontend (.env.local)
+```env
+NEXT_PUBLIC_API_URL=https://api.yourdomain.com
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
+```
+
+#### Backend (.env)
+```env
+NODE_ENV=production
+PORT=3001
+HOST=0.0.0.0
+CORS_ORIGIN=https://yourdomain.com
+LOG_LEVEL=info
+DATABASE_URL=postgresql://user:pass@host:5432/db
+REDIS_URL=redis://host:6379
+JWT_SECRET=your-super-secret-jwt-key-min-32-chars
+API_RATE_LIMIT=1000
+```
+
+### Docker Production Build
+
+```bash
+# Build production images
+docker compose -f docker/docker-compose.prod.yml build
+
+# Deploy with environment variables
+docker compose -f docker/docker-compose.prod.yml up -d
+```
+
+## 📊 Monitoring and Health Checks
+
+### Health Endpoints
+
+- **Frontend**: `GET /api/health`
+- **Backend**: `GET /health` or `GET /api/health`
+
+### Logging
+
+- **Structured JSON logs** in production
+- **Request correlation** with unique IDs
+- **Error tracking** with stack traces
+- **Performance metrics**
+
+## 🤝 Contributing
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit changes**: `git commit -m 'Add amazing feature'`
+4. **Push to branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
+
+### Code Quality
+
+- **ESLint**: Enforced code style
+- **Prettier**: Automatic code formatting
+- **TypeScript**: Strict type checking
+- **Pre-commit hooks**: Automated quality checks
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Next.js** team for the amazing framework
+- **Material UI** for the component library
+- **Express.js** for the backend framework
+- **TypeScript** for type safety
+- **pnpm** for efficient package management
+
+---
+
+## 🔗 Quick Links
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Material UI Documentation](https://mui.com/)
+- [Express.js Documentation](https://expressjs.com/)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+- [Docker Documentation](https://docs.docker.com/)
+- [pnpm Documentation](https://pnpm.io/)
+
+---
+
+**Happy coding! 🎉**

@@ -8,3 +8,6 @@ export * from './utils';
 
 // API Contracts
 export * from './api';
+
+// Environment validation
+export * from './env';

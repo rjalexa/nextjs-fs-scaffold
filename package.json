@@ -8,12 +8,17 @@
     "dev:frontend": "pnpm --filter frontend dev",
     "dev:backend": "pnpm --filter mock-backend dev",
     "docker:dev": "docker compose -f docker/docker-compose.dev.yml up --build",
+    "docker:prod": "docker compose -f docker/docker-compose.prod.yml up --build",
     "build:all": "pnpm -r build",
     "lint": "pnpm -r lint",
     "lint:fix": "pnpm -r lint:fix",
     "type-check": "pnpm -r type-check",
     "test": "pnpm -r test",
-    "clean": "pnpm -r clean && rm -rf node_modules"
+    "test:watch": "pnpm -r test:watch",
+    "test:coverage": "pnpm -r test:coverage",
+    "test:e2e": "pnpm --filter frontend test:e2e",
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "prepare": "husky install"
   },
   "engines": {
     "node": ">=20.0.0",
@@ -21,12 +26,17 @@
   },
   "packageManager": "pnpm@9.0.0",
   "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/jest": "^29.5.8",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "eslint": "^9.0.0",
     "husky": "^9.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^15.0.0",
     "prettier": "^3.2.0",
+    "ts-jest": "^29.1.1",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.32.1"
   }
