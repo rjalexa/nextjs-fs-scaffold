@@ -139,7 +139,7 @@ export const CardTitle: React.FC<{ children: React.ReactNode }> = ({ children })
  * Card Text component
  */
 export const CardText: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Typography variant="body2" color="text.secondary">
+  <Typography variant="body2" color="text.secondary" component="div">
     {children}
   </Typography>
 );

@@ -1,8 +1,8 @@
 'use client';
 
-import { Container, Typography, Box, Grid, Paper } from '@mui/material';
+import { Container, Typography, Box, Grid, Paper, Divider, List, ListItem, ListItemText, Chip } from '@mui/material';
 import React, { useState } from 'react';
-import { Button, Card, CardText, TextField, Alert, useTheme } from 'ui-components';
+import { Button, Card, CardText, Alert, useTheme } from 'ui-components';
 
 /**
  * Home page component
@@ -14,45 +14,64 @@ export default function HomePage() {
   // Alert state
   const [alertOpen, setAlertOpen] = useState(true);
   
-  // Form state
-  const [formValues, setFormValues] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
-  
   // Loading state
   const [loading, setLoading] = useState(false);
   
-  // Handle form input change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormValues(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // API response state
+  const [apiResponse, setApiResponse] = useState<any>(null);
+  const [apiUrl, setApiUrl] = useState<string>('');
+  const [apiStatus, setApiStatus] = useState<number | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Handle fetch button click
+  const handleFetch = async () => {
     setLoading(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Reset previous API response data
+    setApiResponse(null);
+    setApiError(null);
     
-    console.info('Form submitted:', formValues);
-    setLoading(false);
+    // Prepare API URL
+    const url = 'https://randomuser.me/api/';
+    setApiUrl(url);
     
-    // Reset form
-    setFormValues({
-      name: '',
-      email: '',
-      message: '',
-    });
-    
-    // Show success alert
-    setAlertOpen(true);
+    try {
+      // Log the request details
+      console.info('API URL:', url);
+      
+      // Make the API call
+      console.info('Making API call...');
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      // Store the status code
+      const status = response.status;
+      setApiStatus(status);
+      console.info('Response status:', status);
+      
+      // Parse the response
+      console.info('Parsing response...');
+      const data = await response.json();
+      console.info('Response data received:', data);
+      
+      // Store the API response
+      console.info('Updating state with response data...');
+      setApiResponse(data);
+      
+      // Show success alert
+      setAlertOpen(true);
+      console.info('API call completed successfully');
+    } catch (error) {
+      console.error('API request failed:', error);
+      setApiError(error instanceof Error ? error.message : 'Unknown error');
+    } finally {
+      setLoading(false);
+      console.info('Loading state set to false');
+    }
   };
   
   // Toggle theme
@@ -147,73 +166,123 @@ export default function HomePage() {
         </Grid>
       </Grid>
       
-      {/* Contact Form */}
+      {/* Fetch Button */}
       <Paper sx={{ p: 4, mb: 6 }}>
         <Typography variant="h4" component="h2" gutterBottom>
-          Contact Form
+          Random User API
         </Typography>
         <Typography variant="body1" paragraph>
-          This is a sample form demonstrating form handling with Material UI and React.
+          Click the button below to fetch random user data from the public API.
         </Typography>
         
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="name"
-                label="Name"
-                name="name"
-                value={formValues.name}
-                onChange={handleInputChange}
-                disabled={loading}
-                loading={loading}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                type="email"
-                value={formValues.email}
-                onChange={handleInputChange}
-                disabled={loading}
-                loading={loading}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                id="message"
-                label="Message"
-                name="message"
-                multiline
-                rows={4}
-                value={formValues.message}
-                onChange={handleInputChange}
-                disabled={loading}
-                loading={loading}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                loading={loading}
-              >
-                Submit
-              </Button>
-            </Grid>
-          </Grid>
+        <Box sx={{ mt: 3 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleFetch}
+            loading={loading}
+          >
+            FETCH
+          </Button>
         </Box>
       </Paper>
+      
+      {/* API Response Display */}
+      {(apiResponse || apiError) && (
+        <Paper sx={{ p: 4, mb: 6 }}>
+          <Typography variant="h4" component="h2" gutterBottom>
+            API Response Details
+          </Typography>
+          
+          <List>
+            <ListItem>
+              <ListItemText 
+                primary="API Endpoint URL" 
+                secondary={apiUrl} 
+                primaryTypographyProps={{ fontWeight: 'bold' }}
+              />
+            </ListItem>
+            
+            <Divider component="li" />
+            
+            
+            <ListItem>
+              <Box sx={{ width: '100%' }}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  Response Status
+                </Typography>
+                <Box sx={{ mt: 1 }}>
+                  <Chip 
+                    label={apiStatus ? `${apiStatus} ${apiStatus === 200 ? '(OK)' : ''}` : 'Unknown'} 
+                    color={apiStatus === 200 ? 'success' : 'error'} 
+                    size="small" 
+                  />
+                </Box>
+              </Box>
+            </ListItem>
+          </List>
+          
+          {apiError && (
+            <Alert 
+              severity="error" 
+              title="API Request Failed" 
+              sx={{ mt: 2 }}
+            >
+              {apiError}
+            </Alert>
+          )}
+          
+          {apiResponse && (
+            <Box sx={{ mt: 3 }}>
+              <Typography variant="h5" gutterBottom>
+                Random User Data
+              </Typography>
+              
+              {apiResponse.results && apiResponse.results.length > 0 && (
+                <Card
+                  title={`${apiResponse.results[0].name.title} ${apiResponse.results[0].name.first} ${apiResponse.results[0].name.last}`}
+                  subtitle={`Email: ${apiResponse.results[0].email}`}
+                  image={apiResponse.results[0].picture.large}
+                  imageAlt="Random User"
+                  imageHeight={150}
+                >
+                  <CardText>
+                    <Box component="div" sx={{ mb: 1 }}>
+                      <Typography variant="body2" component="span">
+                        <strong>Location:</strong> {apiResponse.results[0].location.city}, {apiResponse.results[0].location.country}
+                      </Typography>
+                    </Box>
+                    <Box component="div">
+                      <Typography variant="body2" component="span">
+                        <strong>Phone:</strong> {apiResponse.results[0].phone}
+                      </Typography>
+                    </Box>
+                  </CardText>
+                </Card>
+              )}
+              
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Raw Response:
+                </Typography>
+                <Paper 
+                  elevation={0} 
+                  sx={{ 
+                    p: 2, 
+                    bgcolor: 'grey.100', 
+                    maxHeight: '200px', 
+                    overflow: 'auto',
+                    '& pre': { margin: 0 }
+                  }}
+                >
+                  <pre>{JSON.stringify(apiResponse, null, 2)}</pre>
+                </Paper>
+              </Box>
+            </Box>
+          )}
+        </Paper>
+      )}
       
       {/* Footer */}
       <Box sx={{ py: 4, textAlign: 'center' }}>
