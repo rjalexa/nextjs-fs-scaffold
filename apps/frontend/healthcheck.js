@@ -1,4 +1,4 @@
-const http = require('http');
+import http from 'http';
 
 const options = {
   host: 'localhost',
@@ -8,7 +8,7 @@ const options = {
 };
 
 const request = http.request(options, (res) => {
-  console.log(`STATUS: ${res.statusCode}`);
+  console.info(`STATUS: ${res.statusCode}`);
   if (res.statusCode === 200) {
     process.exit(0);
   } else {
@@ -17,7 +17,7 @@ const request = http.request(options, (res) => {
 });
 
 request.on('error', function(err) {
-  console.log('ERROR', err);
+  console.error('ERROR', err);
   process.exit(1);
 });
 

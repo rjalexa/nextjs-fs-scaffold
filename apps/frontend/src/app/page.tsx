@@ -4,6 +4,26 @@ import { Container, Typography, Box, Grid, Paper, Divider, List, ListItem, ListI
 import React, { useState } from 'react';
 import { Button, Card, CardText, Alert, useTheme } from 'ui-components';
 
+// Interface for Random User API response
+interface RandomUserResponse {
+  results: Array<{
+    name: {
+      title: string;
+      first: string;
+      last: string;
+    };
+    email: string;
+    phone: string;
+    picture: {
+      large: string;
+    };
+    location: {
+      city: string;
+      country: string;
+    };
+  }>;
+}
+
 /**
  * Home page component
  */
@@ -18,7 +38,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   
   // API response state
-  const [apiResponse, setApiResponse] = useState<any>(null);
+  const [apiResponse, setApiResponse] = useState<RandomUserResponse | null>(null);
   const [apiUrl, setApiUrl] = useState<string>('');
   const [apiStatus, setApiStatus] = useState<number | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);

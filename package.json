@@ -2,6 +2,7 @@
   "name": "next-fullstack-scaffold",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Next.js full-stack application scaffold",
   "scripts": {
     "dev:all": "pnpm --parallel -r dev",

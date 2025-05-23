@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
+
 import config from '../config.js';
 
 // Rate limiting store (in-memory for demo, use Redis in production)
@@ -83,7 +84,7 @@ export const validateInput = (req: Request, _res: Response, next: NextFunction) 
 
   // Sanitize request body
   if (req.body && typeof req.body === 'object') {
-    const sanitizeObject = (obj: any): any => {
+    const sanitizeObject = (obj: unknown): unknown => {
       if (typeof obj === 'string') {
         return sanitizeString(obj);
       }
@@ -91,7 +92,7 @@ export const validateInput = (req: Request, _res: Response, next: NextFunction) 
         return obj.map(sanitizeObject);
       }
       if (obj && typeof obj === 'object') {
-        const sanitized: any = {};
+        const sanitized: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(obj)) {
           sanitized[key] = sanitizeObject(value);
         }

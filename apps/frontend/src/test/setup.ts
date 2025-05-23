@@ -24,7 +24,7 @@ jest.mock('next/navigation', () => ({
 // Mock Next.js image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props: any) => {
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
     return React.createElement('img', props);
   },
 }));
@@ -33,14 +33,14 @@ jest.mock('next/image', () => ({
 process.env.NEXT_PUBLIC_API_URL = 'http://localhost:3001';
 
 // Global test utilities
-(global as any).ResizeObserver = jest.fn().mockImplementation(() => ({
+(global as typeof globalThis).ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }));
 
 // Mock IntersectionObserver
-(global as any).IntersectionObserver = jest.fn().mockImplementation(() => ({
+(global as typeof globalThis).IntersectionObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
