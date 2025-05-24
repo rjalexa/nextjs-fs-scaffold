@@ -1,6 +1,7 @@
 'use client';
 
-import { Container, Typography, Box, Grid, Paper, Divider, List, ListItem, ListItemText, Chip } from '@mui/material';
+import { motion } from 'framer-motion';
+import { Github, Moon, Sun, Monitor, Sparkles, Zap, Shield, Rocket } from 'lucide-react';
 import React, { useState } from 'react';
 import { Button, Card, CardText, Alert, useTheme } from 'ui-components';
 
@@ -25,7 +26,7 @@ interface RandomUserResponse {
 }
 
 /**
- * Home page component
+ * Modern Home page component with Tailwind CSS + DaisyUI
  */
 export default function HomePage() {
   // Theme state
@@ -56,11 +57,9 @@ export default function HomePage() {
     setApiUrl(url);
     
     try {
-      // Log the request details
       console.info('API URL:', url);
-      
-      // Make the API call
       console.info('Making API call...');
+      
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -68,21 +67,14 @@ export default function HomePage() {
         },
       });
       
-      // Store the status code
       const status = response.status;
       setApiStatus(status);
       console.info('Response status:', status);
       
-      // Parse the response
-      console.info('Parsing response...');
       const data = await response.json();
       console.info('Response data received:', data);
       
-      // Store the API response
-      console.info('Updating state with response data...');
       setApiResponse(data);
-      
-      // Show success alert
       setAlertOpen(true);
       console.info('API call completed successfully');
     } catch (error) {
@@ -90,226 +82,291 @@ export default function HomePage() {
       setApiError(error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setLoading(false);
-      console.info('Loading state set to false');
     }
   };
   
   // Toggle theme
   const toggleTheme = () => {
-    setThemeMode(themeMode === 'light' ? 'dark' : 'light');
+    const modes: Array<'light' | 'dark' | 'system'> = ['light', 'dark', 'system'];
+    const currentIndex = modes.indexOf(themeMode);
+    const nextIndex = (currentIndex + 1) % modes.length;
+    setThemeMode(modes[nextIndex]);
+  };
+
+  // Get theme icon
+  const getThemeIcon = () => {
+    switch (themeMode) {
+      case 'light':
+        return <Sun className="w-4 h-4" />;
+      case 'dark':
+        return <Moon className="w-4 h-4" />;
+      case 'system':
+        return <Monitor className="w-4 h-4" />;
+      default:
+        return <Monitor className="w-4 h-4" />;
+    }
   };
 
   return (
-    <Container maxWidth="lg">
-      {/* Header */}
-      <Box sx={{ my: 4, textAlign: 'center' }}>
-        <Typography variant="h2" component="h1" gutterBottom>
-          Next.js Full-Stack Application
-        </Typography>
-        <Typography variant="h5" component="h2" color="text.secondary" gutterBottom>
-          A production-ready scaffold with Next.js, Material UI, and TypeScript
-        </Typography>
-        <Box sx={{ mt: 2 }}>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            onClick={toggleTheme}
-            sx={{ mr: 2 }}
+    <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-200 to-base-300">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-hero opacity-10"></div>
+        <div className="container mx-auto px-4 py-16 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center max-w-4xl mx-auto"
           >
-            Toggle {themeMode === 'light' ? 'Dark' : 'Light'} Mode
-          </Button>
-          <Button 
-            variant="outlined" 
-            color="primary" 
-            href="https://github.com"
-            component="a"
-            onClick={() => window.open("https://github.com", "_blank", "noopener")}
-          >
-            View Source
-          </Button>
-        </Box>
-      </Box>
-      
-      {/* Alert */}
-      {alertOpen && (
-        <Alert
-          severity="success"
-          title="Welcome to the Next.js Full-Stack Application!"
-          dismissible
-          onDismiss={() => setAlertOpen(false)}
-          sx={{ mb: 4 }}
-        >
-          This is a production-ready scaffold with Next.js, Material UI, and TypeScript.
-        </Alert>
-      )}
-      
-      {/* Feature Cards */}
-      <Grid container spacing={4} sx={{ mb: 6 }}>
-        <Grid item xs={12} md={4}>
-          <Card
-            title="Next.js 15 with App Router"
-            subtitle="Modern React Framework"
-            image="/images/nextjs.png"
-            imageAlt="Next.js Logo"
-            imageHeight={150}
-          >
-            <CardText>
-              Utilizing the latest Next.js features including App Router, Server Components, and React Server Actions.
-            </CardText>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Card
-            title="Material UI v6"
-            subtitle="Beautiful UI Components"
-            image="/images/material-design.png"
-            imageAlt="Material UI Logo"
-            imageHeight={150}
-          >
-            <CardText>
-              Leveraging Material UI&apos;s comprehensive component library with custom theme configuration.
-            </CardText>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Card
-            title="TypeScript"
-            subtitle="Type-Safe Development"
-            image="/images/typescript.png"
-            imageAlt="TypeScript Logo"
-            imageHeight={150}
-          >
-            <CardText>
-              Full TypeScript support for enhanced developer experience and code quality.
-            </CardText>
-          </Card>
-        </Grid>
-      </Grid>
-      
-      {/* Fetch Button */}
-      <Paper sx={{ p: 4, mb: 6 }}>
-        <Typography variant="h4" component="h2" gutterBottom>
-          Random User API
-        </Typography>
-        <Typography variant="body1" paragraph>
-          Click the button below to fetch random user data from the public API.
-        </Typography>
-        
-        <Box sx={{ mt: 3 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={handleFetch}
-            loading={loading}
-          >
-            FETCH
-          </Button>
-        </Box>
-      </Paper>
-      
-      {/* API Response Display */}
-      {(apiResponse || apiError) && (
-        <Paper sx={{ p: 4, mb: 6 }}>
-          <Typography variant="h4" component="h2" gutterBottom>
-            API Response Details
-          </Typography>
-          
-          <List>
-            <ListItem>
-              <ListItemText 
-                primary="API Endpoint URL" 
-                secondary={apiUrl} 
-                primaryTypographyProps={{ fontWeight: 'bold' }}
-              />
-            </ListItem>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6">
+              <span className="gradient-text">Next.js</span>
+              <br />
+              <span className="text-base-content">Full-Stack Application</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-base-content/80 mb-8 leading-relaxed">
+              A modern, production-ready scaffold with{' '}
+              <span className="font-semibold text-primary">Tailwind CSS</span>,{' '}
+              <span className="font-semibold text-secondary">DaisyUI</span>, and{' '}
+              <span className="font-semibold text-accent">TypeScript</span>
+            </p>
             
-            <Divider component="li" />
-            
-            
-            <ListItem>
-              <Box sx={{ width: '100%' }}>
-                <Typography variant="subtitle1" fontWeight="bold">
-                  Response Status
-                </Typography>
-                <Box sx={{ mt: 1 }}>
-                  <Chip 
-                    label={apiStatus ? `${apiStatus} ${apiStatus === 200 ? '(OK)' : ''}` : 'Unknown'} 
-                    color={apiStatus === 200 ? 'success' : 'error'} 
-                    size="small" 
-                  />
-                </Box>
-              </Box>
-            </ListItem>
-          </List>
-          
-          {apiError && (
-            <Alert 
-              severity="error" 
-              title="API Request Failed" 
-              sx={{ mt: 2 }}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                variant="primary" 
+                size="lg"
+                startIcon={<Sparkles className="w-5 h-5" />}
+                className="btn-modern"
+              >
+                Get Started
+              </Button>
+              <Button 
+                variant="outlined" 
+                size="lg"
+                startIcon={<Github className="w-5 h-5" />}
+                onClick={() => window.open("https://github.com", "_blank", "noopener")}
+              >
+                View Source
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="lg"
+                startIcon={getThemeIcon()}
+                onClick={toggleTheme}
+                className="capitalize"
+              >
+                {themeMode} Mode
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+      
+      <div className="container mx-auto px-4 py-8">
+        {/* Welcome Alert */}
+        {alertOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-8"
+          >
+            <Alert
+              severity="success"
+              title="Welcome to the Modern UI Experience!"
+              dismissible
+              onDismiss={() => setAlertOpen(false)}
             >
-              {apiError}
+              This application showcases the power of Tailwind CSS + DaisyUI with beautiful animations and modern design patterns.
             </Alert>
-          )}
+          </motion.div>
+        )}
+        
+        {/* Feature Cards */}
+        <section className="mb-16">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-3xl md:text-4xl font-bold text-center mb-12 gradient-text"
+          >
+            Modern Features
+          </motion.h2>
           
-          {apiResponse && (
-            <Box sx={{ mt: 3 }}>
-              <Typography variant="h5" gutterBottom>
-                Random User Data
-              </Typography>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card
+              title="Tailwind CSS + DaisyUI"
+              subtitle="Modern Styling Framework"
+              image="/images/nextjs.png"
+              imageAlt="Next.js Logo"
+              imageHeight={200}
+              actions={
+                <Button variant="primary" size="sm" startIcon={<Zap className="w-4 h-4" />}>
+                  Learn More
+                </Button>
+              }
+            >
+              <CardText>
+                Utilizing Tailwind CSS utilities with DaisyUI components for rapid development and consistent design.
+              </CardText>
+            </Card>
+
+            <Card
+              title="Framer Motion"
+              subtitle="Smooth Animations"
+              image="/images/material-design.png"
+              imageAlt="Animation"
+              imageHeight={200}
+              actions={
+                <Button variant="secondary" size="sm" startIcon={<Sparkles className="w-4 h-4" />}>
+                  Explore
+                </Button>
+              }
+            >
+              <CardText>
+                Beautiful animations and micro-interactions powered by Framer Motion for enhanced user experience.
+              </CardText>
+            </Card>
+
+            <Card
+              title="TypeScript"
+              subtitle="Type-Safe Development"
+              image="/images/typescript.png"
+              imageAlt="TypeScript Logo"
+              imageHeight={200}
+              actions={
+                <Button variant="accent" size="sm" startIcon={<Shield className="w-4 h-4" />}>
+                  Discover
+                </Button>
+              }
+            >
+              <CardText>
+                Full TypeScript support for enhanced developer experience, better code quality, and fewer runtime errors.
+              </CardText>
+            </Card>
+          </div>
+        </section>
+        
+        {/* API Demo Section */}
+        <section className="mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="card bg-base-100 shadow-modern-lg glass"
+          >
+            <div className="card-body">
+              <h2 className="card-title text-2xl md:text-3xl gradient-text mb-4">
+                <Rocket className="w-8 h-8" />
+                Random User API Demo
+              </h2>
+              <p className="text-base-content/80 mb-6">
+                Click the button below to fetch random user data from the public API and see our modern loading states and data presentation.
+              </p>
               
-              {apiResponse.results && apiResponse.results.length > 0 && (
-                <Card
-                  title={`${apiResponse.results[0].name.title} ${apiResponse.results[0].name.first} ${apiResponse.results[0].name.last}`}
-                  subtitle={`Email: ${apiResponse.results[0].email}`}
-                  image={apiResponse.results[0].picture.large}
-                  imageAlt="Random User"
-                  imageHeight={150}
+              <div className="card-actions">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={handleFetch}
+                  loading={loading}
+                  startIcon={!loading ? <Zap className="w-5 h-5" /> : undefined}
+                  className="btn-modern"
                 >
-                  <CardText>
-                    <Box component="div" sx={{ mb: 1 }}>
-                      <Typography variant="body2" component="span">
-                        <strong>Location:</strong> {apiResponse.results[0].location.city}, {apiResponse.results[0].location.country}
-                      </Typography>
-                    </Box>
-                    <Box component="div">
-                      <Typography variant="body2" component="span">
-                        <strong>Phone:</strong> {apiResponse.results[0].phone}
-                      </Typography>
-                    </Box>
-                  </CardText>
-                </Card>
-              )}
-              
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Raw Response:
-                </Typography>
-                <Paper 
-                  elevation={0} 
-                  sx={{ 
-                    p: 2, 
-                    bgcolor: 'grey.100', 
-                    maxHeight: '200px', 
-                    overflow: 'auto',
-                    '& pre': { margin: 0 }
-                  }}
-                >
-                  <pre>{JSON.stringify(apiResponse, null, 2)}</pre>
-                </Paper>
-              </Box>
-            </Box>
-          )}
-        </Paper>
-      )}
-      
-      {/* Footer */}
-      <Box sx={{ py: 4, textAlign: 'center' }}>
-        <Typography variant="body2" color="text.secondary">
-          &copy; {new Date().getFullYear()} Next.js Full-Stack Application. All rights reserved.
-        </Typography>
-      </Box>
-    </Container>
+                  {loading ? 'Fetching...' : 'Fetch Random User'}
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+        
+        {/* API Response Display */}
+        {(apiResponse || apiError) && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-16"
+          >
+            <div className="card bg-base-100 shadow-modern glass">
+              <div className="card-body">
+                <h3 className="card-title text-xl mb-4">API Response Details</h3>
+                
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span className="font-semibold">Endpoint:</span>
+                    <code className="bg-base-200 px-2 py-1 rounded text-sm">{apiUrl}</code>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">Status:</span>
+                    <div className={`badge ${apiStatus === 200 ? 'badge-success' : 'badge-error'}`}>
+                      {apiStatus} {apiStatus === 200 ? '(OK)' : ''}
+                    </div>
+                  </div>
+                </div>
+                
+                {apiError && (
+                  <Alert 
+                    severity="error" 
+                    title="API Request Failed"
+                    className="mt-4"
+                  >
+                    {apiError}
+                  </Alert>
+                )}
+                
+                {apiResponse && apiResponse.results && apiResponse.results.length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="text-lg font-semibold mb-4">Random User Data</h4>
+                    
+                    <Card
+                      title={`${apiResponse.results[0].name.title} ${apiResponse.results[0].name.first} ${apiResponse.results[0].name.last}`}
+                      subtitle={apiResponse.results[0].email}
+                      image={apiResponse.results[0].picture.large}
+                      imageAlt="Random User"
+                      imageHeight={200}
+                      className="max-w-md"
+                    >
+                      <CardText>
+                        <div className="space-y-2">
+                          <div>
+                            <span className="font-semibold">Location:</span>{' '}
+                            {apiResponse.results[0].location.city}, {apiResponse.results[0].location.country}
+                          </div>
+                          <div>
+                            <span className="font-semibold">Phone:</span>{' '}
+                            {apiResponse.results[0].phone}
+                          </div>
+                        </div>
+                      </CardText>
+                    </Card>
+                    
+                    <div className="mt-4">
+                      <details className="collapse collapse-arrow bg-base-200">
+                        <summary className="collapse-title font-medium">
+                          View Raw JSON Response
+                        </summary>
+                        <div className="collapse-content">
+                          <pre className="bg-base-300 p-4 rounded-lg text-sm overflow-auto max-h-64">
+                            {JSON.stringify(apiResponse, null, 2)}
+                          </pre>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.section>
+        )}
+        
+        {/* Footer */}
+        <footer className="text-center py-8">
+          <div className="divider"></div>
+          <p className="text-base-content/60">
+            &copy; {new Date().getFullYear()} Next.js Full-Stack Application. Built with ❤️ using Tailwind CSS + DaisyUI.
+          </p>
+        </footer>
+      </div>
+    </div>
   );
 }

@@ -19,6 +19,8 @@
     "@mui/icons-material": "^6.0.0",
     "@mui/material": "^6.0.0",
     "@mui/material-nextjs": "^6.0.0",
+    "framer-motion": "^12.12.2",
+    "lucide-react": "^0.511.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "shared": "workspace:*"

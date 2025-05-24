@@ -1,98 +1,126 @@
 'use client';
 
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { ThemeMode } from 'shared';
-
-import { createAppTheme, getEffectiveThemeMode } from '../../theme';
 
 // Theme context type
 interface ThemeContextType {
   themeMode: ThemeMode;
   setThemeMode: (mode: ThemeMode) => void;
+  isDark: boolean;
 }
 
 // Create theme context
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // Theme provider props
-interface AppThemeProviderProps {
+interface ThemeProviderProps {
   children: React.ReactNode;
   defaultMode?: ThemeMode;
 }
 
 /**
- * Custom theme provider component
+ * Modern theme provider for Tailwind CSS + DaisyUI
  * Manages theme mode and provides theme context
  */
-export const ThemeProvider: React.FC<AppThemeProviderProps> = ({
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
   defaultMode = 'system',
 }) => {
   // State for theme mode
   const [themeMode, setThemeMode] = useState<ThemeMode>(defaultMode);
+  const [mounted, setMounted] = useState(false);
   
   // Get effective theme mode (light or dark)
+  const getEffectiveThemeMode = (mode: ThemeMode): 'light' | 'dark' => {
+    if (mode === 'system') {
+      if (typeof window !== 'undefined') {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      return 'light'; // Default to light if window is not available (SSR)
+    }
+    return mode;
+  };
+
   const effectiveMode = getEffectiveThemeMode(themeMode);
-  
-  // Create theme based on mode
-  const theme = useMemo(() => createAppTheme(effectiveMode), [effectiveMode]);
+  const isDark = effectiveMode === 'dark';
   
   // Context value
   const contextValue = useMemo(
     () => ({
       themeMode,
       setThemeMode,
+      isDark,
     }),
-    [themeMode]
+    [themeMode, isDark]
   );
+
+  // Effect to apply theme to document
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const root = document.documentElement;
+    root.setAttribute('data-theme', effectiveMode);
+    
+    // Also set class for additional styling if needed
+    if (effectiveMode === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    }
+  }, [effectiveMode, mounted]);
 
   // Effect to save theme mode to localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('themeMode', themeMode);
-    }
-  }, [themeMode]);
+    if (!mounted) return;
+    
+    localStorage.setItem('themeMode', themeMode);
+  }, [themeMode, mounted]);
 
-  // Effect to load theme mode from localStorage
+  // Effect to load theme mode from localStorage and handle mounting
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedMode = localStorage.getItem('themeMode') as ThemeMode | null;
-      if (savedMode) {
-        setThemeMode(savedMode);
-      }
+    setMounted(true);
+    
+    const savedMode = localStorage.getItem('themeMode') as ThemeMode | null;
+    if (savedMode && ['light', 'dark', 'system'].includes(savedMode)) {
+      setThemeMode(savedMode);
     }
   }, []);
 
   // Effect to listen for system theme changes
   useEffect(() => {
-    if (themeMode !== 'system' || typeof window === 'undefined') return;
+    if (!mounted || themeMode !== 'system') return;
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = () => {
       // Force re-render when system theme changes
-      setThemeMode((prev: ThemeMode) => {
-        if (prev === 'system') {
-          // This is a trick to force re-render without changing the actual value
-          setThemeMode('system-temp' as ThemeMode);
-          setTimeout(() => setThemeMode('system'), 0);
-        }
-        return prev;
-      });
+      const newEffectiveMode = getEffectiveThemeMode('system');
+      document.documentElement.setAttribute('data-theme', newEffectiveMode);
+      
+      if (newEffectiveMode === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
     };
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [themeMode]);
+  }, [themeMode, mounted]);
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return <div style={{ visibility: 'hidden' }}>{children}</div>;
+  }
 
   return (
     <ThemeContext.Provider value={contextValue}>
-      <MuiThemeProvider theme={theme}>
-        <CssBaseline />
-        {children}
-      </MuiThemeProvider>
+      {children}
     </ThemeContext.Provider>
   );
 };

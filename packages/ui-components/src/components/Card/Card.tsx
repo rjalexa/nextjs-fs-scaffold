@@ -1,14 +1,10 @@
-import MuiCard, { CardProps as MuiCardProps } from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import Skeleton from '@mui/material/Skeleton';
-import Typography from '@mui/material/Typography';
+'use client';
+
+import { motion } from 'framer-motion';
 import React from 'react';
 
 // Extended card props
-export interface CardProps extends Omit<MuiCardProps, 'title'> {
+export interface CardProps {
   /**
    * Card title
    */
@@ -18,6 +14,11 @@ export interface CardProps extends Omit<MuiCardProps, 'title'> {
    * Card subtitle
    */
   subtitle?: React.ReactNode;
+  
+  /**
+   * Card content
+   */
+  children?: React.ReactNode;
   
   /**
    * Card media image source
@@ -48,10 +49,32 @@ export interface CardProps extends Omit<MuiCardProps, 'title'> {
    * Card header action (icon button, etc.)
    */
   headerAction?: React.ReactNode;
+  
+  /**
+   * If true, the card will have glass morphism effect
+   */
+  glass?: boolean;
+  
+  /**
+   * If true, the card will have hover animations
+   */
+  animated?: boolean;
+  
+  /**
+   * Custom className for additional styling
+   */
+  className?: string;
+  
+  /**
+   * Additional HTML attributes
+   */
+  style?: React.CSSProperties;
+  id?: string;
+  role?: string;
 }
 
 /**
- * Enhanced Card component with common patterns
+ * Modern Card component with Tailwind CSS + DaisyUI
  */
 export const Card: React.FC<CardProps> = ({
   children,
@@ -59,87 +82,152 @@ export const Card: React.FC<CardProps> = ({
   subtitle,
   image,
   imageAlt = '',
-  imageHeight = 140,
+  imageHeight = 200,
   actions,
   loading = false,
   headerAction,
-  ...props
+  glass = false,
+  animated = true,
+  className = '',
+  style,
+  id,
+  role,
 }) => {
-  return (
-    <MuiCard {...props}>
-      {/* Card Header */}
-      {(title || subtitle) && (
-        <CardHeader
-          title={
-            loading ? (
-              <Skeleton animation="wave" height={10} width="80%" />
-            ) : (
-              title
-            )
-          }
-          subheader={
-            loading ? (
-              <Skeleton animation="wave" height={10} width="40%" />
-            ) : (
-              subtitle
-            )
-          }
-          action={headerAction}
-        />
-      )}
+  // Build class names
+  const baseClasses = 'card bg-white shadow-xl';
+  const glassClasses = glass ? 'backdrop-blur-lg bg-white/10 border border-white/20' : '';
+  const animatedClasses = animated ? 'transition-all duration-300 hover:shadow-2xl hover:-translate-y-1' : '';
+  
+  const cardClasses = [
+    baseClasses,
+    glassClasses,
+    animatedClasses,
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
-      {/* Card Media */}
+  const cardContent = (
+    <div className={cardClasses} style={style} id={id} role={role}>
+      {/* Card Image */}
       {image && (
-        loading ? (
-          <Skeleton 
-            animation="wave" 
-            variant="rectangular" 
-            height={imageHeight} 
-            width="100%" 
-          />
-        ) : (
-          <CardMedia
-            component="img"
-            height={imageHeight}
-            image={image}
-            alt={imageAlt}
-            sx={{ objectFit: 'contain' }}
-          />
-        )
+        <figure className="relative overflow-hidden">
+          {loading ? (
+            <div 
+              className="animate-pulse bg-gray-300 w-full"
+              style={{ height: typeof imageHeight === 'number' ? `${imageHeight}px` : imageHeight }}
+            />
+          ) : (
+            <img
+              src={image}
+              alt={imageAlt}
+              className="w-full object-cover transition-transform duration-300 hover:scale-105"
+              style={{ height: typeof imageHeight === 'number' ? `${imageHeight}px` : imageHeight }}
+            />
+          )}
+        </figure>
       )}
 
-      {/* Card Content */}
-      <CardContent>
-        {loading ? (
-          <>
-            <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
-            <Skeleton animation="wave" height={10} width="80%" />
-          </>
-        ) : (
-          children
+      {/* Card Body */}
+      <div className="p-6">
+        {/* Card Header */}
+        {(title || subtitle || headerAction) && (
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-1">
+              {title && (
+                <h2 className="text-xl font-bold text-gray-900 mb-1">
+                  {loading ? (
+                    <div className="animate-pulse bg-gray-300 h-6 w-3/4 rounded"></div>
+                  ) : (
+                    title
+                  )}
+                </h2>
+              )}
+              {subtitle && (
+                <p className="text-gray-600 text-sm">
+                  {loading ? (
+                    <div className="animate-pulse bg-gray-300 h-4 w-1/2 rounded"></div>
+                  ) : (
+                    subtitle
+                  )}
+                </p>
+              )}
+            </div>
+            {headerAction && !loading && (
+              <div className="flex-shrink-0 ml-4">
+                {headerAction}
+              </div>
+            )}
+          </div>
         )}
-      </CardContent>
 
-      {/* Card Actions */}
-      {actions && <CardActions>{actions}</CardActions>}
-    </MuiCard>
+        {/* Card Content */}
+        <div className="flex-1">
+          {loading ? (
+            <div className="space-y-2">
+              <div className="animate-pulse bg-gray-300 h-4 w-full rounded"></div>
+              <div className="animate-pulse bg-gray-300 h-4 w-5/6 rounded"></div>
+              <div className="animate-pulse bg-gray-300 h-4 w-4/6 rounded"></div>
+            </div>
+          ) : (
+            children
+          )}
+        </div>
+
+        {/* Card Actions */}
+        {actions && (
+          <div className="flex justify-end mt-6 gap-2">
+            {loading ? (
+              <div className="flex gap-2">
+                <div className="animate-pulse bg-gray-300 h-10 w-20 rounded"></div>
+                <div className="animate-pulse bg-gray-300 h-10 w-20 rounded"></div>
+              </div>
+            ) : (
+              actions
+            )}
+          </div>
+        )}
+      </div>
+    </div>
   );
+
+  // Wrap with motion if animated
+  if (animated && !loading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        whileHover={{ y: -4 }}
+      >
+        {cardContent}
+      </motion.div>
+    );
+  }
+
+  return cardContent;
 };
 
 /**
  * Card Title component
  */
-export const CardTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Typography variant="h6" component="h2" gutterBottom>
+export const CardTitle: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
+  children, 
+  className = '' 
+}) => (
+  <h3 className={`text-lg font-semibold text-gray-900 ${className}`}>
     {children}
-  </Typography>
+  </h3>
 );
 
 /**
  * Card Text component
  */
-export const CardText: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Typography variant="body2" color="text.secondary" component="div">
+export const CardText: React.FC<{ children: React.ReactNode; className?: string }> = ({ 
+  children, 
+  className = '' 
+}) => (
+  <div className={`text-gray-700 ${className}`}>
     {children}
-  </Typography>
+  </div>
 );

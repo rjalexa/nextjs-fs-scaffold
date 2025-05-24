@@ -1,0 +1,170 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-base-100 text-base-content;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-base-200;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-base-300 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral;
+  }
+}
+
+@layer components {
+  /* Glass morphism effect */
+  .glass {
+    @apply backdrop-blur-lg bg-white/10 border border-white/20 shadow-xl;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-lg bg-black/10 border border-black/20 shadow-xl;
+  }
+  
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+  
+  /* Modern button hover effects */
+  .btn-modern {
+    @apply relative overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
+  }
+  
+  .btn-modern::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-0 transition-opacity duration-300;
+  }
+  
+  .btn-modern:hover::before {
+    @apply opacity-100;
+  }
+  
+  /* Card hover effects */
+  .card-modern {
+    @apply transition-all duration-300 hover:shadow-2xl hover:-translate-y-1;
+  }
+  
+  /* Focus styles */
+  .focus-modern {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-base-100;
+  }
+  
+  /* Loading skeleton */
+  .skeleton {
+    @apply animate-pulse bg-gradient-to-r from-base-300 via-base-200 to-base-300 bg-[length:200%_100%];
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes skeleton-loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+  
+  /* Modern input styles */
+  .input-modern {
+    @apply transition-all duration-200 border-2 border-base-300 focus:border-primary focus:shadow-lg focus:shadow-primary/10;
+  }
+  
+  /* Floating label */
+  .floating-label {
+    @apply absolute left-3 transition-all duration-200 pointer-events-none;
+  }
+  
+  .floating-label.active {
+    @apply -top-2.5 text-sm text-primary bg-base-100 px-1;
+  }
+  
+  .floating-label.inactive {
+    @apply top-3 text-base text-base-content/60;
+  }
+}
+
+@layer utilities {
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+  
+  /* Gradient backgrounds */
+  .bg-gradient-primary {
+    @apply bg-gradient-to-br from-primary to-primary-focus;
+  }
+  
+  .bg-gradient-secondary {
+    @apply bg-gradient-to-br from-secondary to-secondary-focus;
+  }
+  
+  .bg-gradient-hero {
+    @apply bg-gradient-to-br from-primary via-secondary to-accent;
+  }
+  
+  /* Text shadows */
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Modern shadows */
+  .shadow-modern {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .shadow-modern-lg {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* Dark mode specific styles */
+[data-theme="dark"] {
+  .glass {
+    @apply backdrop-blur-lg bg-black/20 border border-white/10;
+  }
+  
+  .floating-label.active {
+    @apply bg-base-100;
+  }
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
