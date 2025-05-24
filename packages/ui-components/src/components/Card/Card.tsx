@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import React from 'react';
+import * as React from 'react';
 
 // Extended card props
 export interface CardProps {
@@ -82,7 +82,6 @@ export const Card: React.FC<CardProps> = ({
   subtitle,
   image,
   imageAlt = '',
-  imageHeight = 200,
   actions,
   loading = false,
   headerAction,
@@ -94,7 +93,7 @@ export const Card: React.FC<CardProps> = ({
   role,
 }) => {
   // Build class names
-  const baseClasses = 'card bg-white shadow-xl';
+  const baseClasses = 'card bg-white shadow-xl p-4 min-h-[450px]'; // Added p-4 for padding around the card and min-h for consistent height
   const glassClasses = glass ? 'backdrop-blur-lg bg-white/10 border border-white/20' : '';
   const animatedClasses = animated ? 'transition-all duration-300 hover:shadow-2xl hover:-translate-y-1' : '';
   
@@ -111,25 +110,23 @@ export const Card: React.FC<CardProps> = ({
     <div className={cardClasses} style={style} id={id} role={role}>
       {/* Card Image */}
       {image && (
-        <figure className="relative overflow-hidden">
+        <figure className="relative overflow-hidden h-48 flex items-center justify-center"> {/* Fixed height and centered content */}
           {loading ? (
             <div 
-              className="animate-pulse bg-gray-300 w-full"
-              style={{ height: typeof imageHeight === 'number' ? `${imageHeight}px` : imageHeight }}
+              className="animate-pulse bg-gray-300 w-full h-full" // Use h-full for skeleton
             />
           ) : (
             <img
               src={image}
               alt={imageAlt}
-              className="w-full object-cover transition-transform duration-300 hover:scale-105"
-              style={{ height: typeof imageHeight === 'number' ? `${imageHeight}px` : imageHeight }}
+              className="w-full h-auto object-contain transition-transform duration-300 hover:scale-105"
             />
           )}
         </figure>
       )}
 
       {/* Card Body */}
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-grow">
         {/* Card Header */}
         {(title || subtitle || headerAction) && (
           <div className="flex justify-between items-start mb-4">

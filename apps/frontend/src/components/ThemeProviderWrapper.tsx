@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import React from 'react';
+import * as React from 'react';
 
 // Dynamically import ThemeProvider with SSR disabled
 const DynamicThemeProvider = dynamic(

@@ -26,5 +26,9 @@
   ],
   "exclude": [
     "node_modules"
+  ],
+  "references": [
+    { "path": "../../packages/ui-components" },
+    { "path": "../../packages/shared" }
   ]
 }

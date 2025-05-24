@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Github, Moon, Sun, Monitor, Sparkles, Zap, Shield, Rocket, Code, Palette } from 'lucide-react';
-import React, { useState } from 'react';
+import { Moon, Sun, Monitor, Sparkles, Shield, Rocket, Code, Palette } from 'lucide-react';
+import * as React from 'react';
+import { useState } from 'react';
 import { Button, Card, CardText, Alert, useTheme } from 'ui-components';
 
 // Interface for Random User API response
@@ -121,13 +122,6 @@ export default function HomePage() {
       icon: <Shield className="w-4 h-4" />,
       variant: 'outline' as const
     },
-    {
-      name: 'Material Design',
-      description: 'Modern design system with beautiful components and consistent user experience patterns.',
-      image: '/images/material-design.png',
-      icon: <Zap className="w-4 h-4" />,
-      variant: 'success' as const
-    }
   ];
 
   return (
@@ -193,8 +187,6 @@ export default function HomePage() {
                   title={tech.name}
                   image={tech.image}
                   imageAlt={`${tech.name} Logo`}
-                  imageHeight={120}
-                  className="h-full"
                   actions={
                     <Button 
                       variant={tech.variant} 
@@ -240,7 +232,7 @@ export default function HomePage() {
                     size="lg"
                     onClick={handleFetch}
                     loading={loading}
-                    startIcon={!loading ? <Zap className="w-5 h-5" /> : undefined}
+                    startIcon={!loading ? <Rocket className="w-5 h-5" /> : undefined}
                     className="btn-wide"
                   >
                     {loading ? 'Fetching User...' : 'Fetch Random User'}

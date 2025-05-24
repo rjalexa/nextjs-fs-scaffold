@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import * as React from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { ThemeMode } from 'shared';
 
 // Theme context type
@@ -68,14 +69,27 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     [themeMode, isDark]
   );
 
-  // Effect to save theme mode to localStorage
+  // Effect to apply theme to document and save to localStorage
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
-      return; // Do not save on initial render, as it's read from localStorage or system
+      return; // Do not apply theme on initial render, it's handled by inline script
     }
+
+    const root = document.documentElement;
+    root.setAttribute('data-theme', effectiveMode);
+
+    // Also set class for additional styling if needed (e.g., for Tailwind dark mode)
+    if (effectiveMode === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    }
+
     localStorage.setItem('themeMode', themeMode);
-  }, [themeMode]);
+  }, [effectiveMode, themeMode]);
 
   // Effect to listen for system theme changes and update themeMode state
   useEffect(() => {
@@ -85,7 +99,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
     const handleChange = () => {
       // When system theme changes, update the internal themeMode state to reflect it.
-      // This will trigger a re-render and the `data-theme` attribute will be updated by DaisyUI.
+      // This will trigger a re-render and the `data-theme` attribute will be updated by the first useEffect.
       setThemeMode('system');
     };
 

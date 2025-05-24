@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
-import React from 'react';
+import * as React from 'react';
 
 // Alert severity types
 export type AlertSeverity = 'success' | 'error' | 'warning' | 'info';
