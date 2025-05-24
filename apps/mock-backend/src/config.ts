@@ -10,7 +10,7 @@ const env: BackendEnv = validateEnv(backendEnvSchema);
 // Configuration object
 const config = {
   server: {
-    port: typeof env.PORT === 'string' ? parseInt(env.PORT, 10) : env.PORT,
+    port: typeof env.BACKEND_PORT === 'string' ? parseInt(env.BACKEND_PORT, 10) : env.BACKEND_PORT,
     host: env.HOST,
     isDevelopment: env.NODE_ENV === 'development',
     isProduction: env.NODE_ENV === 'production',

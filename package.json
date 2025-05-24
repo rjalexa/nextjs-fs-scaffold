@@ -10,6 +10,7 @@
     "dev:backend": "pnpm --filter mock-backend dev",
     "docker:dev": "docker compose -f docker/docker-compose.dev.yml up --build",
     "docker:prod": "docker compose -f docker/docker-compose.prod.yml up --build",
+    "build": "pnpm -r build",
     "build:all": "pnpm -r build",
     "lint": "pnpm -r lint",
     "lint:fix": "pnpm -r lint:fix",

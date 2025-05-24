@@ -11,7 +11,7 @@ export const frontendEnvSchema = z.object({
 // Backend environment schema
 export const backendEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.string().transform(Number).pipe(z.number().min(1).max(65535)).default('3001'),
+  BACKEND_PORT: z.string().transform(Number).pipe(z.number().min(1).max(65535)).default('3001'),
   HOST: z.string().default('localhost'),
   CORS_ORIGIN: z.string().optional(),
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
