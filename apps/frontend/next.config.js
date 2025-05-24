@@ -4,7 +4,7 @@ const nextConfig = {
   transpilePackages: ['shared', 'ui-components'],
   output: 'standalone',
   images: {
-    domains: ['localhost'],
+    // domains: ['localhost'],
     remotePatterns: [
       {
         protocol: 'https',
