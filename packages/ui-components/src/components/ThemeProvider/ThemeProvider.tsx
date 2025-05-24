@@ -113,14 +113,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [themeMode, mounted]);
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return <div style={{ visibility: 'hidden' }}>{children}</div>;
-  }
-
   return (
     <ThemeContext.Provider value={contextValue}>
-      {children}
+      {!mounted ? <div style={{ visibility: 'hidden' }}>{children}</div> : children}
     </ThemeContext.Provider>
   );
 };

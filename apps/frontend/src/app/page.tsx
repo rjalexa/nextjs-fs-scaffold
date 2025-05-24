@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Github, Moon, Sun, Monitor, Sparkles, Zap, Shield, Rocket } from 'lucide-react';
+import { Github, Moon, Sun, Monitor, Sparkles, Zap, Shield, Rocket, Code, Palette } from 'lucide-react';
 import React, { useState } from 'react';
 import { Button, Card, CardText, Alert, useTheme } from 'ui-components';
 
@@ -32,16 +32,11 @@ export default function HomePage() {
   // Theme state
   const { themeMode, setThemeMode } = useTheme();
   
-  // Alert state
-  const [alertOpen, setAlertOpen] = useState(true);
-  
   // Loading state
   const [loading, setLoading] = useState(false);
   
   // API response state
   const [apiResponse, setApiResponse] = useState<RandomUserResponse | null>(null);
-  const [apiUrl, setApiUrl] = useState<string>('');
-  const [apiStatus, setApiStatus] = useState<number | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
   
   // Handle fetch button click
@@ -52,31 +47,20 @@ export default function HomePage() {
     setApiResponse(null);
     setApiError(null);
     
-    // Prepare API URL
-    const url = 'https://randomuser.me/api/';
-    setApiUrl(url);
-    
     try {
-      console.info('API URL:', url);
-      console.info('Making API call...');
-      
-      const response = await fetch(url, {
+      const response = await fetch('https://randomuser.me/api/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
       
-      const status = response.status;
-      setApiStatus(status);
-      console.info('Response status:', status);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       
       const data = await response.json();
-      console.info('Response data received:', data);
-      
       setApiResponse(data);
-      setAlertOpen(true);
-      console.info('API call completed successfully');
     } catch (error) {
       console.error('API request failed:', error);
       setApiError(error instanceof Error ? error.message : 'Unknown error');
@@ -87,7 +71,7 @@ export default function HomePage() {
   
   // Toggle theme
   const toggleTheme = () => {
-    const modes: Array<'light' | 'dark' | 'system'> = ['light', 'dark', 'system'];
+    const modes: Array<'light' | 'dark' | 'system'> = ['system', 'light', 'dark'];
     const currentIndex = modes.indexOf(themeMode);
     const nextIndex = (currentIndex + 1) % modes.length;
     setThemeMode(modes[nextIndex]);
@@ -107,173 +91,161 @@ export default function HomePage() {
     }
   };
 
+  // Technology data
+  const technologies = [
+    {
+      name: 'Next.js',
+      description: 'The React Framework for Production. Full-stack React framework with server-side rendering, static generation, and more.',
+      image: '/images/nextjs.png',
+      icon: <Code className="w-4 h-4" />,
+      variant: 'primary' as const
+    },
+    {
+      name: 'Tailwind CSS',
+      description: 'A utility-first CSS framework packed with classes that can be composed to build any design, directly in your markup.',
+      image: '/images/tailwind.png',
+      icon: <Palette className="w-4 h-4" />,
+      variant: 'secondary' as const
+    },
+    {
+      name: 'DaisyUI',
+      description: 'Beautiful, semantic component classes for Tailwind CSS. Build faster with pre-designed components.',
+      image: '/images/daisyui.png',
+      icon: <Sparkles className="w-4 h-4" />,
+      variant: 'accent' as const
+    },
+    {
+      name: 'TypeScript',
+      description: 'Full TypeScript support for enhanced developer experience, better code quality, and fewer runtime errors.',
+      image: '/images/typescript.png',
+      icon: <Shield className="w-4 h-4" />,
+      variant: 'outline' as const
+    },
+    {
+      name: 'Material Design',
+      description: 'Modern design system with beautiful components and consistent user experience patterns.',
+      image: '/images/material-design.png',
+      icon: <Zap className="w-4 h-4" />,
+      variant: 'success' as const
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-200 to-base-300">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-hero opacity-10"></div>
-        <div className="container mx-auto px-4 py-16 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              <span className="gradient-text">Next.js</span>
-              <br />
-              <span className="text-base-content">Full-Stack Application</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-base-content/80 mb-8 leading-relaxed">
-              A modern, production-ready scaffold with{' '}
-              <span className="font-semibold text-primary">Tailwind CSS</span>,{' '}
-              <span className="font-semibold text-secondary">DaisyUI</span>, and{' '}
-              <span className="font-semibold text-accent">TypeScript</span>
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                variant="primary" 
-                size="lg"
-                startIcon={<Sparkles className="w-5 h-5" />}
-                className="btn-modern"
-              >
-                Get Started
-              </Button>
-              <Button 
-                variant="outlined" 
-                size="lg"
-                startIcon={<Github className="w-5 h-5" />}
-                onClick={() => window.open("https://github.com", "_blank", "noopener")}
-              >
-                View Source
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="lg"
-                startIcon={getThemeIcon()}
-                onClick={toggleTheme}
-                className="capitalize"
-              >
-                {themeMode} Mode
-              </Button>
-            </div>
-          </motion.div>
+    <div className="min-h-screen bg-base-100">
+      {/* Theme Selector at Top */}
+      <div className="navbar bg-base-100 border-b border-base-300">
+        <div className="navbar-start">
+          <div className="text-xl font-bold text-base-content">
+            Next.js Scaffold
+          </div>
         </div>
-      </section>
-      
-      <div className="container mx-auto px-4 py-8">
-        {/* Welcome Alert */}
-        {alertOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-8"
+        <div className="navbar-end">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            startIcon={getThemeIcon()}
+            onClick={toggleTheme}
+            className="capitalize gap-2"
           >
-            <Alert
-              severity="success"
-              title="Welcome to the Modern UI Experience!"
-              dismissible
-              onDismiss={() => setAlertOpen(false)}
-            >
-              This application showcases the power of Tailwind CSS + DaisyUI with beautiful animations and modern design patterns.
-            </Alert>
-          </motion.div>
-        )}
+            {themeMode}
+          </Button>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8">
+        {/* Main Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-base-content">
+            Next.js Tailwind DaisyUI
+            <br />
+            <span className="text-primary">Fullstack Scaffold</span>
+          </h1>
+          <p className="text-xl text-base-content/70 max-w-3xl mx-auto">
+            A modern, production-ready scaffold featuring the best tools for building full-stack applications
+          </p>
+        </motion.div>
         
-        {/* Feature Cards */}
+        {/* Technology Cards Section */}
         <section className="mb-16">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-3xl md:text-4xl font-bold text-center mb-12 gradient-text"
+            className="text-3xl md:text-4xl font-bold text-center mb-12 text-base-content"
           >
-            Modern Features
+            Technologies
           </motion.h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card
-              title="Tailwind CSS + DaisyUI"
-              subtitle="Modern Styling Framework"
-              image="/images/nextjs.png"
-              imageAlt="Next.js Logo"
-              imageHeight={200}
-              actions={
-                <Button variant="primary" size="sm" startIcon={<Zap className="w-4 h-4" />}>
-                  Learn More
-                </Button>
-              }
-            >
-              <CardText>
-                Utilizing Tailwind CSS utilities with DaisyUI components for rapid development and consistent design.
-              </CardText>
-            </Card>
-
-            <Card
-              title="Framer Motion"
-              subtitle="Smooth Animations"
-              image="/images/material-design.png"
-              imageAlt="Animation"
-              imageHeight={200}
-              actions={
-                <Button variant="secondary" size="sm" startIcon={<Sparkles className="w-4 h-4" />}>
-                  Explore
-                </Button>
-              }
-            >
-              <CardText>
-                Beautiful animations and micro-interactions powered by Framer Motion for enhanced user experience.
-              </CardText>
-            </Card>
-
-            <Card
-              title="TypeScript"
-              subtitle="Type-Safe Development"
-              image="/images/typescript.png"
-              imageAlt="TypeScript Logo"
-              imageHeight={200}
-              actions={
-                <Button variant="accent" size="sm" startIcon={<Shield className="w-4 h-4" />}>
-                  Discover
-                </Button>
-              }
-            >
-              <CardText>
-                Full TypeScript support for enhanced developer experience, better code quality, and fewer runtime errors.
-              </CardText>
-            </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            {technologies.map((tech, index) => (
+              <motion.div
+                key={tech.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+              >
+                <Card
+                  title={tech.name}
+                  image={tech.image}
+                  imageAlt={`${tech.name} Logo`}
+                  imageHeight={120}
+                  className="h-full"
+                  actions={
+                    <Button 
+                      variant={tech.variant} 
+                      size="sm" 
+                      startIcon={tech.icon}
+                      className="w-full"
+                    >
+                      Learn More
+                    </Button>
+                  }
+                >
+                  <CardText>
+                    {tech.description}
+                  </CardText>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </section>
         
-        {/* API Demo Section */}
+        {/* API Demo Section with Hero Component */}
         <section className="mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="card bg-base-100 shadow-modern-lg glass"
           >
-            <div className="card-body">
-              <h2 className="card-title text-2xl md:text-3xl gradient-text mb-4">
-                <Rocket className="w-8 h-8" />
-                Random User API Demo
-              </h2>
-              <p className="text-base-content/80 mb-6">
-                Click the button below to fetch random user data from the public API and see our modern loading states and data presentation.
-              </p>
-              
-              <div className="card-actions">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  onClick={handleFetch}
-                  loading={loading}
-                  startIcon={!loading ? <Zap className="w-5 h-5" /> : undefined}
-                  className="btn-modern"
-                >
-                  {loading ? 'Fetching...' : 'Fetch Random User'}
-                </Button>
+            <div className="hero bg-base-200 rounded-box">
+              <div className="hero-content text-center">
+                <div className="max-w-md">
+                  <div className="flex justify-center mb-4">
+                    <Rocket className="w-16 h-16 text-primary" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-base-content mb-4">
+                    Random User API Demo
+                  </h2>
+                  <p className="text-base-content/70 mb-6">
+                    Test our API integration by fetching random user data from a public API. 
+                    See modern loading states and beautiful data presentation.
+                  </p>
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    onClick={handleFetch}
+                    loading={loading}
+                    startIcon={!loading ? <Zap className="w-5 h-5" /> : undefined}
+                    className="btn-wide"
+                  >
+                    {loading ? 'Fetching User...' : 'Fetch Random User'}
+                  </Button>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -286,76 +258,48 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-16"
           >
-            <div className="card bg-base-100 shadow-modern glass">
-              <div className="card-body">
-                <h3 className="card-title text-xl mb-4">API Response Details</h3>
-                
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="font-semibold">Endpoint:</span>
-                    <code className="bg-base-200 px-2 py-1 rounded text-sm">{apiUrl}</code>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">Status:</span>
-                    <div className={`badge ${apiStatus === 200 ? 'badge-success' : 'badge-error'}`}>
-                      {apiStatus} {apiStatus === 200 ? '(OK)' : ''}
+            {apiError && (
+              <Alert 
+                severity="error" 
+                title="API Request Failed"
+                className="mb-6"
+              >
+                {apiError}
+              </Alert>
+            )}
+            
+            {apiResponse && apiResponse.results && apiResponse.results.length > 0 && (
+              <div className="hero bg-base-200 rounded-box">
+                <div className="hero-content flex-col lg:flex-row">
+                  <img 
+                    src={apiResponse.results[0].picture.large} 
+                    alt="Random User"
+                    className="max-w-sm rounded-lg shadow-2xl" 
+                  />
+                  <div>
+                    <h3 className="text-3xl font-bold text-base-content">
+                      {apiResponse.results[0].name.title} {apiResponse.results[0].name.first} {apiResponse.results[0].name.last}
+                    </h3>
+                    <div className="py-6 space-y-2 text-base-content/80">
+                      <p><span className="font-semibold">Email:</span> {apiResponse.results[0].email}</p>
+                      <p><span className="font-semibold">Phone:</span> {apiResponse.results[0].phone}</p>
+                      <p><span className="font-semibold">Location:</span> {apiResponse.results[0].location.city}, {apiResponse.results[0].location.country}</p>
+                    </div>
+                    <div className="collapse collapse-arrow bg-base-100">
+                      <input type="checkbox" /> 
+                      <div className="collapse-title text-lg font-medium">
+                        View Raw JSON Response
+                      </div>
+                      <div className="collapse-content"> 
+                        <pre className="bg-base-300 p-4 rounded-lg text-sm overflow-auto max-h-64 text-base-content">
+                          {JSON.stringify(apiResponse, null, 2)}
+                        </pre>
+                      </div>
                     </div>
                   </div>
                 </div>
-                
-                {apiError && (
-                  <Alert 
-                    severity="error" 
-                    title="API Request Failed"
-                    className="mt-4"
-                  >
-                    {apiError}
-                  </Alert>
-                )}
-                
-                {apiResponse && apiResponse.results && apiResponse.results.length > 0 && (
-                  <div className="mt-6">
-                    <h4 className="text-lg font-semibold mb-4">Random User Data</h4>
-                    
-                    <Card
-                      title={`${apiResponse.results[0].name.title} ${apiResponse.results[0].name.first} ${apiResponse.results[0].name.last}`}
-                      subtitle={apiResponse.results[0].email}
-                      image={apiResponse.results[0].picture.large}
-                      imageAlt="Random User"
-                      imageHeight={200}
-                      className="max-w-md"
-                    >
-                      <CardText>
-                        <div className="space-y-2">
-                          <div>
-                            <span className="font-semibold">Location:</span>{' '}
-                            {apiResponse.results[0].location.city}, {apiResponse.results[0].location.country}
-                          </div>
-                          <div>
-                            <span className="font-semibold">Phone:</span>{' '}
-                            {apiResponse.results[0].phone}
-                          </div>
-                        </div>
-                      </CardText>
-                    </Card>
-                    
-                    <div className="mt-4">
-                      <details className="collapse collapse-arrow bg-base-200">
-                        <summary className="collapse-title font-medium">
-                          View Raw JSON Response
-                        </summary>
-                        <div className="collapse-content">
-                          <pre className="bg-base-300 p-4 rounded-lg text-sm overflow-auto max-h-64">
-                            {JSON.stringify(apiResponse, null, 2)}
-                          </pre>
-                        </div>
-                      </details>
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
+            )}
           </motion.section>
         )}
         
@@ -363,7 +307,7 @@ export default function HomePage() {
         <footer className="text-center py-8">
           <div className="divider"></div>
           <p className="text-base-content/60">
-            &copy; {new Date().getFullYear()} Next.js Full-Stack Application. Built with ❤️ using Tailwind CSS + DaisyUI.
+            &copy; {new Date().getFullYear()} Next.js Tailwind DaisyUI Fullstack Scaffold. Built with ❤️
           </p>
         </footer>
       </div>
