@@ -1,6 +1,13 @@
 'use client';
 
-import { ThemeProvider } from 'ui-components';
+import dynamic from 'next/dynamic';
+import React from 'react';
+
+// Dynamically import ThemeProvider with SSR disabled
+const DynamicThemeProvider = dynamic(
+  () => import('ui-components').then((mod) => mod.ThemeProvider),
+  { ssr: false }
+);
 
 interface ThemeProviderWrapperProps {
   children: React.ReactNode;
@@ -8,8 +15,8 @@ interface ThemeProviderWrapperProps {
 
 export function ThemeProviderWrapper({ children }: ThemeProviderWrapperProps) {
   return (
-    <ThemeProvider defaultMode="system">
+    <DynamicThemeProvider defaultMode="system">
       {children}
-    </ThemeProvider>
+    </DynamicThemeProvider>
   );
 }

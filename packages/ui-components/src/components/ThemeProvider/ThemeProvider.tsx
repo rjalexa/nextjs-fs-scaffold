@@ -28,9 +28,22 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   defaultMode = 'system',
 }) => {
   // State for theme mode
-  const [themeMode, setThemeMode] = useState<ThemeMode>(defaultMode);
-  const [mounted, setMounted] = useState(false);
-  
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    // Initialize themeMode from the data-theme attribute set by the inline script on the HTML element.
+    // This ensures consistency between server-rendered and client-hydrated content.
+    if (typeof window !== 'undefined') {
+      const rootTheme = document.documentElement.getAttribute('data-theme');
+      if (rootTheme && ['light', 'dark', 'system'].includes(rootTheme)) {
+        return rootTheme as ThemeMode;
+      }
+    }
+    // Fallback to defaultMode if data-theme is not found or invalid (should not happen with inline script).
+    return defaultMode;
+  });
+
+  // Ref to track if it's the initial render
+  const initialRender = React.useRef(true);
+
   // Get effective theme mode (light or dark)
   const getEffectiveThemeMode = (mode: ThemeMode): 'light' | 'dark' => {
     if (mode === 'system') {
@@ -44,7 +57,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   const effectiveMode = getEffectiveThemeMode(themeMode);
   const isDark = effectiveMode === 'dark';
-  
+
   // Context value
   const contextValue = useMemo(
     () => ({
@@ -55,67 +68,34 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     [themeMode, isDark]
   );
 
-  // Effect to apply theme to document
-  useEffect(() => {
-    if (!mounted) return;
-    
-    const root = document.documentElement;
-    root.setAttribute('data-theme', effectiveMode);
-    
-    // Also set class for additional styling if needed
-    if (effectiveMode === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    }
-  }, [effectiveMode, mounted]);
-
   // Effect to save theme mode to localStorage
   useEffect(() => {
-    if (!mounted) return;
-    
-    localStorage.setItem('themeMode', themeMode);
-  }, [themeMode, mounted]);
-
-  // Effect to load theme mode from localStorage and handle mounting
-  useEffect(() => {
-    setMounted(true);
-    
-    const savedMode = localStorage.getItem('themeMode') as ThemeMode | null;
-    if (savedMode && ['light', 'dark', 'system'].includes(savedMode)) {
-      setThemeMode(savedMode);
+    if (initialRender.current) {
+      initialRender.current = false;
+      return; // Do not save on initial render, as it's read from localStorage or system
     }
-  }, []);
+    localStorage.setItem('themeMode', themeMode);
+  }, [themeMode]);
 
-  // Effect to listen for system theme changes
+  // Effect to listen for system theme changes and update themeMode state
   useEffect(() => {
-    if (!mounted || themeMode !== 'system') return;
+    if (themeMode !== 'system') return;
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     const handleChange = () => {
-      // Force re-render when system theme changes
-      const newEffectiveMode = getEffectiveThemeMode('system');
-      document.documentElement.setAttribute('data-theme', newEffectiveMode);
-      
-      if (newEffectiveMode === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-      } else {
-        document.documentElement.classList.add('light');
-        document.documentElement.classList.remove('dark');
-      }
+      // When system theme changes, update the internal themeMode state to reflect it.
+      // This will trigger a re-render and the `data-theme` attribute will be updated by DaisyUI.
+      setThemeMode('system');
     };
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [themeMode, mounted]);
+  }, [themeMode]);
 
   return (
     <ThemeContext.Provider value={contextValue}>
-      {!mounted ? <div style={{ visibility: 'hidden' }}>{children}</div> : children}
+      {children}
     </ThemeContext.Provider>
   );
 };
