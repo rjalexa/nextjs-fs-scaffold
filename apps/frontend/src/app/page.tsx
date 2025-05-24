@@ -120,7 +120,7 @@ export default function HomePage() {
       description: 'Full TypeScript support for enhanced developer experience, better code quality, and fewer runtime errors.',
       image: '/images/typescript.png',
       icon: <Shield className="w-4 h-4" />,
-      variant: 'outline' as const
+      variant: 'warning' as const
     },
   ];
 
@@ -192,7 +192,7 @@ export default function HomePage() {
                       variant={tech.variant} 
                       size="sm" 
                       startIcon={tech.icon}
-                      className="w-full"
+                      className={`w-full ${tech.name === 'TypeScript' ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-black border-none shadow-lg hover:shadow-xl transition-all duration-300' : ''}`}
                     >
                       Learn More
                     </Button>

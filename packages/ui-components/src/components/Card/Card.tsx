@@ -94,7 +94,7 @@ export const Card: React.FC<CardProps> = ({
   role,
 }) => {
   // Build class names
-  const baseClasses = 'card bg-white shadow-xl p-4 h-[450px] flex flex-col'; // Fixed height and flex column for equal heights
+  const baseClasses = 'card bg-white shadow-xl p-4 h-[450px] flex flex-col relative'; // Fixed height and flex column for equal heights
   const glassClasses = glass ? 'backdrop-blur-lg bg-white/10 border border-white/20' : '';
   const animatedClasses = animated ? 'transition-all duration-300 hover:shadow-2xl hover:-translate-y-1' : '';
   
@@ -130,7 +130,7 @@ export const Card: React.FC<CardProps> = ({
       )}
 
       {/* Card Body */}
-      <div className="p-6 flex flex-col flex-grow">
+      <div className="p-6 flex flex-col flex-grow overflow-hidden">
         {/* Card Header */}
         {(title || subtitle || headerAction) && (
           <div className="flex justify-between items-start mb-4 flex-shrink-0">
@@ -178,7 +178,7 @@ export const Card: React.FC<CardProps> = ({
 
           {/* Card Actions - Always at the bottom */}
           {actions && (
-            <div className="flex justify-end mt-6 gap-2 flex-shrink-0">
+            <div className="flex justify-end mt-6 gap-2 flex-shrink-0 relative z-10">
               {loading ? (
                 <div className="flex gap-2">
                   <div className="animate-pulse bg-gray-300 h-10 w-20 rounded"></div>
@@ -202,6 +202,7 @@ export const Card: React.FC<CardProps> = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
         whileHover={{ y: -4 }}
+        className="relative z-0"
       >
         {cardContent}
       </motion.div>
