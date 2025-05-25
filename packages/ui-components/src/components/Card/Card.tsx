@@ -93,7 +93,7 @@ export const Card: React.FC<CardProps> = ({
   role,
 }) => {
   // Build class names
-  const baseClasses = 'card bg-white shadow-xl p-4 h-[450px] flex flex-col relative'; // Fixed height and flex column for equal heights
+  const baseClasses = 'card bg-white shadow-xl p-4 min-h-[400px] flex flex-col relative'; // Minimum height with flexible growth
   const glassClasses = glass ? 'backdrop-blur-lg bg-white/10 border border-white/20' : '';
   const animatedClasses = animated ? 'transition-all duration-300 hover:shadow-2xl hover:-translate-y-1' : '';
   
@@ -126,13 +126,13 @@ export const Card: React.FC<CardProps> = ({
       )}
 
       {/* Card Body */}
-      <div className="p-6 flex flex-col flex-grow overflow-hidden">
+      <div className="p-6 flex flex-col flex-grow">
         {/* Card Header */}
         {(title || subtitle || headerAction) && (
           <div className="flex justify-between items-start mb-4 flex-shrink-0">
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               {title && (
-                <h2 className="text-xl font-bold text-gray-900 mb-1">
+                <h2 className="text-xl font-bold text-gray-900 mb-1 break-words">
                   {loading ? (
                     <div className="animate-pulse bg-gray-300 h-6 w-3/4 rounded"></div>
                   ) : (
@@ -141,7 +141,7 @@ export const Card: React.FC<CardProps> = ({
                 </h2>
               )}
               {subtitle && (
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 text-sm break-words">
                   {loading ? (
                     <div className="animate-pulse bg-gray-300 h-4 w-1/2 rounded"></div>
                   ) : (
@@ -159,8 +159,8 @@ export const Card: React.FC<CardProps> = ({
         )}
 
         {/* Card Content - This will expand to fill available space */}
-        <div className="flex-1 flex flex-col justify-between">
-          <div className="flex-grow">
+        <div className="flex-1 flex flex-col justify-between min-h-0">
+          <div className="flex-grow mb-4 overflow-hidden">
             {loading ? (
               <div className="space-y-2">
                 <div className="animate-pulse bg-gray-300 h-4 w-full rounded"></div>
@@ -168,18 +168,17 @@ export const Card: React.FC<CardProps> = ({
                 <div className="animate-pulse bg-gray-300 h-4 w-4/6 rounded"></div>
               </div>
             ) : (
-              children
+              <div className="text-sm leading-relaxed break-words">
+                {children}
+              </div>
             )}
           </div>
 
           {/* Card Actions - Always at the bottom */}
           {actions && (
-            <div className="flex justify-end mt-6 gap-2 flex-shrink-0 relative z-10">
+            <div className="flex justify-center mt-auto pt-4 flex-shrink-0">
               {loading ? (
-                <div className="flex gap-2">
-                  <div className="animate-pulse bg-gray-300 h-10 w-20 rounded"></div>
-                  <div className="animate-pulse bg-gray-300 h-10 w-20 rounded"></div>
-                </div>
+                <div className="animate-pulse bg-gray-300 h-10 w-32 rounded"></div>
               ) : (
                 actions
               )}
