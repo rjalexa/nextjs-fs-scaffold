@@ -10,9 +10,9 @@ export const backendEnvSchema = z.object({
   CORS_ORIGIN: z.string().optional(),
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
   API_RATE_LIMIT: z.coerce.number().default(100),
-  JWT_SECRET: z.string().default('your-secret-key'),
-  DATABASE_URL: z.string().optional(),
-  REDIS_URL: z.string().optional(),
+  JWT_SECRET: z.string().min(32),
+  DATABASE_URL: z.string().url(),
+  REDIS_URL: z.string().url().optional(),
 });
 
 /**
@@ -20,8 +20,8 @@ export const backendEnvSchema = z.object({
  */
 export const frontendEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  FRONTEND_PORT: z.coerce.number().default(3000),
-  NEXT_PUBLIC_API_URL: z.string().default('http://localhost:8000'),
+  NEXT_PUBLIC_API_URL: z.string().url(),
+  NEXT_PUBLIC_APP_NAME: z.string().default('NextJS App'),
 });
 
 /**
@@ -41,12 +41,12 @@ export type FrontendEnv = z.infer<typeof frontendEnvSchema>;
  */
 export function validateEnv<T extends z.ZodTypeAny>(schema: T): z.infer<T> {
   const result = schema.safeParse(process.env);
-  
+
   if (!result.success) {
     console.error('❌ Invalid environment variables:');
     console.error(result.error.format());
     throw new Error('Invalid environment variables');
   }
-  
+
   return result.data;
 }
