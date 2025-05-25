@@ -1,11 +1,13 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Moon, Sun, Monitor, Sparkles, Shield, Rocket, Code, Palette } from 'lucide-react';
+import { Moon, Sun, Monitor, Rocket } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useState } from 'react';
 import { Button, Card, CardText, Alert, useTheme } from 'ui-components';
+import { technologies } from './shared/technology-data';
 
 // Interface for Random User API response
 interface RandomUserResponse {
@@ -31,6 +33,8 @@ interface RandomUserResponse {
  * Modern Home page component with Tailwind CSS + DaisyUI
  */
 export default function HomePage() {
+  const router = useRouter();
+  
   // Theme state
   const { themeMode, setThemeMode } = useTheme();
   
@@ -93,37 +97,10 @@ export default function HomePage() {
     }
   };
 
-  // Technology data
-  const technologies = [
-    {
-      name: 'Next.js',
-      description: 'The React Framework for Production. Full-stack React framework with server-side rendering, static generation, and more.',
-      image: '/images/nextjs.png',
-      icon: <Code className="w-4 h-4" />,
-      variant: 'primary' as const
-    },
-    {
-      name: 'Tailwind CSS',
-      description: 'A utility-first CSS framework packed with classes that can be composed to build any design, directly in your markup.',
-      image: '/images/tailwind.png',
-      icon: <Palette className="w-4 h-4" />,
-      variant: 'secondary' as const
-    },
-    {
-      name: 'DaisyUI',
-      description: 'Beautiful, semantic component classes for Tailwind CSS. Build faster with pre-designed components.',
-      image: '/images/daisyui.png',
-      icon: <Sparkles className="w-4 h-4" />,
-      variant: 'accent' as const
-    },
-    {
-      name: 'TypeScript',
-      description: 'Full TypeScript support for enhanced developer experience, better code quality, and fewer runtime errors.',
-      image: '/images/typescript.png',
-      icon: <Shield className="w-4 h-4" />,
-      variant: 'warning' as const
-    },
-  ];
+  // Handle navigation to technology details
+  const handleTechnologyClick = () => {
+    router.push('/technology-details');
+  };
 
   return (
     <div className="min-h-screen bg-base-100">
@@ -192,7 +169,8 @@ export default function HomePage() {
                     <Button 
                       variant={tech.variant} 
                       size="sm" 
-                      startIcon={tech.icon}
+                      startIcon={<tech.iconComponent className="w-4 h-4" />}
+                      onClick={handleTechnologyClick}
                       className={`w-full ${tech.name === 'TypeScript' ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-black border-none shadow-lg hover:shadow-xl transition-all duration-300' : ''}`}
                     >
                       Learn More
@@ -207,6 +185,23 @@ export default function HomePage() {
             ))}
           </div>
         </section>
+
+        {/* Technology Details Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="text-center mb-16"
+        >
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={handleTechnologyClick}
+            className="btn-wide"
+          >
+            Technology Details
+          </Button>
+        </motion.div>
         
         {/* API Demo Section with Hero Component */}
         <section className="mb-16">
