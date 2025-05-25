@@ -17,7 +17,7 @@ export default [
   // TypeScript configuration
   ...tseslint.configs.recommended,
   
-  // React configuration
+  // React configuration - only for packages that use React
   ...compat.config({
     extends: ['plugin:react/recommended', 'plugin:react-hooks/recommended', 'plugin:jsx-a11y/recommended'],
     plugins: ['react', 'react-hooks', 'jsx-a11y'],
@@ -34,7 +34,7 @@ export default [
     },
   }).map(config => ({
     ...config,
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['apps/frontend/**/*.{js,jsx,ts,tsx}', 'packages/ui-components/**/*.{js,jsx,ts,tsx}'],
   })),
   
   // Next.js configuration

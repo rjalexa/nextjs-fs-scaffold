@@ -4,7 +4,6 @@ import {
   Sparkles, 
   Shield, 
   Server,
-  Database,
   TestTube,
   Settings,
   Package,
@@ -22,8 +21,6 @@ import {
   Eye,
   Paintbrush,
   Terminal,
-  Box,
-  Workflow,
   LucideIcon 
 } from 'lucide-react';
 
