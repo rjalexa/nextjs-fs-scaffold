@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import * as React from 'react';
-import Image from 'next/image'; // Importing Image from next/image
 
 // Extended card props
 export interface CardProps {
@@ -117,12 +116,9 @@ export const Card: React.FC<CardProps> = ({
               className="animate-pulse bg-gray-300 w-full h-32"
             />
           ) : (
-              <Image
+              <img
                 src={image}
                 alt={imageAlt}
-                priority
-                width={500}
-                height={300}
                 className="object-contain transition-transform duration-300 hover:scale-105 h-32 w-auto"
               />
           )}

@@ -55,6 +55,7 @@ export default [
         },
         node: {
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
+          moduleDirectory: ['node_modules', 'packages'],
         },
       },
       'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
@@ -95,7 +96,7 @@ export default [
       'import/no-unresolved': [
         'error',
         {
-          ignore: ['\\.js$'] // Ignore .js extensions for TypeScript files
+          ignore: ['\\.js$', 'ui-components', 'shared'] // Ignore workspace packages
         }
       ]
     },

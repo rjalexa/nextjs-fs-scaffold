@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Moon, Sun, Monitor, Sparkles, Shield, Rocket, Code, Palette } from 'lucide-react';
+import Image from 'next/image';
 import * as React from 'react';
 import { useState } from 'react';
 import { Button, Card, CardText, Alert, useTheme } from 'ui-components';
@@ -263,9 +264,11 @@ export default function HomePage() {
             {apiResponse && apiResponse.results && apiResponse.results.length > 0 && (
               <div className="hero bg-base-200 rounded-box">
                 <div className="hero-content flex-col lg:flex-row">
-                  <img 
+                  <Image 
                     src={apiResponse.results[0].picture.large} 
                     alt="Random User"
+                    width={384}
+                    height={384}
                     className="max-w-sm rounded-lg shadow-2xl" 
                   />
                   <div>
