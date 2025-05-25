@@ -49,3 +49,5 @@ logs
 *.njsproj
 *.sln
 *.sw?
+apps/frontend/playwright-report/data/
+apps/frontend/test-results/

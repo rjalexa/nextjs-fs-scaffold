@@ -57,7 +57,7 @@
     "setupFilesAfterEnv": [
       "<rootDir>/src/test/setup.ts"
     ],
-    "moduleNameMapping": {
+    "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1",
       "^shared$": "<rootDir>/../../packages/shared/src",
       "^ui-components$": "<rootDir>/../../packages/ui-components/src"
@@ -66,6 +66,19 @@
       "<rootDir>/src/**/__tests__/**/*.{ts,tsx}",
       "<rootDir>/src/**/*.{test,spec}.{ts,tsx}"
     ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/.next/",
+      "<rootDir>/node_modules/",
+      "<rootDir>/coverage/",
+      "<rootDir>/src/test/e2e/"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": ["ts-jest", {
+        "tsconfig": {
+          "jsx": "react-jsx"
+        }
+      }]
+    },
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}",
       "!src/**/*.d.ts",
