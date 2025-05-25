@@ -159,8 +159,8 @@ export const Card: React.FC<CardProps> = ({
         )}
 
         {/* Card Content - This will expand to fill available space */}
-        <div className="flex-1 flex flex-col justify-between min-h-0">
-          <div className="flex-grow mb-6 overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-grow overflow-hidden">
             {loading ? (
               <div className="space-y-2">
                 <div className="animate-pulse bg-gray-300 h-4 w-full rounded"></div>
@@ -176,7 +176,7 @@ export const Card: React.FC<CardProps> = ({
 
           {/* Card Actions - Always at the bottom with consistent spacing */}
           {actions && (
-            <div className="flex justify-center mt-auto pt-2 pb-1 flex-shrink-0 h-12 items-center">
+            <div className="flex justify-center mt-auto pt-4 pb-1 flex-shrink-0 h-12 items-center">
               {loading ? (
                 <div className="animate-pulse bg-gray-300 h-10 w-32 rounded"></div>
               ) : (
