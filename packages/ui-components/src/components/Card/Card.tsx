@@ -93,7 +93,7 @@ export const Card: React.FC<CardProps> = ({
   role,
 }) => {
   // Build class names
-  const baseClasses = 'card bg-white shadow-xl p-4 min-h-[400px] flex flex-col relative'; // Minimum height with flexible growth
+  const baseClasses = 'card bg-white shadow-xl p-4 h-[350px] sm:h-[380px] md:h-[400px] lg:h-[420px] flex flex-col relative overflow-hidden'; // Responsive fixed height with overflow protection
   const glassClasses = glass ? 'backdrop-blur-lg bg-white/10 border border-white/20' : '';
   const animatedClasses = animated ? 'transition-all duration-300 hover:shadow-2xl hover:-translate-y-1' : '';
   
@@ -126,7 +126,7 @@ export const Card: React.FC<CardProps> = ({
       )}
 
       {/* Card Body */}
-      <div className="p-6 flex flex-col flex-grow">
+      <div className="p-4 sm:p-5 md:p-6 flex flex-col flex-grow">
         {/* Card Header */}
         {(title || subtitle || headerAction) && (
           <div className="flex justify-between items-start mb-4 flex-shrink-0">
@@ -160,7 +160,7 @@ export const Card: React.FC<CardProps> = ({
 
         {/* Card Content - This will expand to fill available space */}
         <div className="flex-1 flex flex-col justify-between min-h-0">
-          <div className="flex-grow mb-4 overflow-hidden">
+          <div className="flex-grow mb-6 overflow-hidden">
             {loading ? (
               <div className="space-y-2">
                 <div className="animate-pulse bg-gray-300 h-4 w-full rounded"></div>
@@ -168,15 +168,15 @@ export const Card: React.FC<CardProps> = ({
                 <div className="animate-pulse bg-gray-300 h-4 w-4/6 rounded"></div>
               </div>
             ) : (
-              <div className="text-sm leading-relaxed break-words">
+              <div className="text-sm leading-relaxed break-words overflow-hidden">
                 {children}
               </div>
             )}
           </div>
 
-          {/* Card Actions - Always at the bottom */}
+          {/* Card Actions - Always at the bottom with consistent spacing */}
           {actions && (
-            <div className="flex justify-center mt-auto pt-4 flex-shrink-0">
+            <div className="flex justify-center mt-auto pt-2 pb-1 flex-shrink-0 h-12 items-center">
               {loading ? (
                 <div className="animate-pulse bg-gray-300 h-10 w-32 rounded"></div>
               ) : (
