@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { useState } from 'react';
 import { Button, Card, CardText, Alert, useTheme } from 'ui-components';
+
 import { technologies } from './shared/technology-data';
 
 // Interface for Random User API response
@@ -186,7 +187,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Technology Details Button */}
+        {/* Technologies Details Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -199,7 +200,7 @@ export default function HomePage() {
             onClick={handleTechnologyClick}
             className="btn-wide"
           >
-            Technology Details
+            Technologies Details
           </Button>
         </motion.div>
         

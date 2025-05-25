@@ -5,10 +5,11 @@ import { Moon, Sun, Monitor, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Button, Card, CardText, useTheme } from 'ui-components';
+
 import { technologies } from '../shared/technology-data';
 
 /**
- * Technology Details page component
+ * Technologies Details page component
  */
 export default function TechnologyDetailsPage() {
   const router = useRouter();
@@ -72,7 +73,7 @@ export default function TechnologyDetailsPage() {
           className="text-center mb-16"
         >
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-base-content">
-            Technology
+            Technologies
             <br />
             <span className="text-primary">Details</span>
           </h1>
