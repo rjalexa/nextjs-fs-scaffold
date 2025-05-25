@@ -264,13 +264,15 @@ export default function HomePage() {
             {apiResponse && apiResponse.results && apiResponse.results.length > 0 && (
               <div className="hero bg-base-200 rounded-box">
                 <div className="hero-content flex-col lg:flex-row">
-                  <Image 
-                    src={apiResponse.results[0].picture.large} 
-                    alt="Random User"
-                    width={384}
-                    height={384}
-                    className="max-w-sm rounded-lg shadow-2xl" 
-                  />
+                  <div className="w-64 h-64 flex-shrink-0">
+                    <Image 
+                      src={apiResponse.results[0].picture.large} 
+                      alt="Random User"
+                      width={256}
+                      height={256}
+                      className="w-full h-full object-cover rounded-lg shadow-2xl" 
+                    />
+                  </div>
                   <div>
                     <h3 className="text-3xl font-bold text-base-content">
                       {apiResponse.results[0].name.title} {apiResponse.results[0].name.first} {apiResponse.results[0].name.last}
